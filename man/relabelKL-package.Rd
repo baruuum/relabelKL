@@ -1,20 +1,20 @@
-\name{kl_relabel-package}
-\alias{kl_relabel-package}
-\alias{kl_relabel}
+\name{relabelKL-package}
+\alias{relabelKL-package}
+\alias{relabelKL}
 \docType{package}
-\title{\packageTitle{kl_relabel}}
-\description{\packageDescription{kl_relabel}}
+\title{\packageTitle{relabelKL}}
+\description{\packageDescription{relabelKL}}
 \details{
-  The DESCRIPTION file: \packageDESCRIPTION{kl_relabel}
-  \packageIndices{kl_relabel}
+  The DESCRIPTION file: \packageDESCRIPTION{relabelKL}
+  \packageIndices{relabelKL}
 
   This section should provide a more detailed overview of how to use the
   package, including the most important functions.
 }
 \author{
-  \packageAuthor{kl_relabel}
+  \packageAuthor{relabelKL}
   
-  Maintainer: \packageMaintainer{kl_relabel}
+  Maintainer: \packageMaintainer{relabelKL}
 }
 \references{
   This optional section can contain literature or other references for

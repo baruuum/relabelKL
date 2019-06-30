@@ -5,13 +5,13 @@ Version: 0.0.0.9000
 Date: 2019-06-30
 Authors@R: person("Barum", "Park", email = "baruuum@gmail.com",
                   role = c("aut", "cre"))
-Description: C++ implementation of the relabeling algorithm proposed by 
-    Stephens (2000) to post-process MCMC output of finite mixture models
+Description: Relabeling algorithm proposed by Stephens (2000) to 
+    post-process MCMC output of finite mixture models.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    Rcpp (>= 1.0.1)
+    Rcpp
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.1.1
 Suggests: 
