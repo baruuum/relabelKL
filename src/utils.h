@@ -6,62 +6,6 @@
 
 using namespace Rcpp;
 
-//' Logarithm of sum of exponentials 
-//'
-//' @param x any object that allows iterators
-//' @return returns the log of the sum of exponentiated elements of \code{x}
-template <typename T>
-inline double log_sum_exp(
-        const T & x
-) {
-
-  double max_exp = x(0);
-  double esum(0.0);
-  
-  typename T::const_iterator i; 
-
-  for (i = x.begin() + 1 ; i != x.end() ; ++i)
-    if (*i > max_exp)
-      max_exp = *i;
-
-  for (i = x.begin(); i != x.end() ; ++i)
-    esum += std::exp(*i - max_exp);
-
-  return std::log(esum) + max_exp;
-
-};
-
-
-//' Logarithm of the sum of the exponential of two real numbers
-//'
-//' @param x,y two real numbers
-//' @return returns the log of the sum of the exponential of \code{x} and \code{y}
-inline double log_add_exp(const double x, const double y) {
-
-    double d = x - y;
-    if (d > 0.0)
-        return x + std::log1p(std::exp(-d));
-    if (d <= 0.0)
-        return y + std::log1p(std::exp(d));
-
-}
-
-//' Logarithm of accumulative sum of exponentials
-//'
-//' @param x any object that allows iterators
-//' @return returns the log of the accumulative sum of exponentiated elements of \code{x}
-template <typename T>
-inline T log_accu_exp (const T& x) {
-
-    T y(x);
-    typename T::iterator i = y.begin() + 1;
-
-    for (; i < y.end(); i++) {
-        *i = log_add_exp(*(i - 1), *i);
-    }
-
-    return y;
-};
 
 //' KL Divergence between two distributions
 //'
@@ -147,9 +91,8 @@ inline arma::umat gen_permute(
 //' @param x vector to permute
 //' @param order new order (indices have to start from 0)
 //' @return \code{x} permuted in order \code{order}
-template <typename T>
-inline T permute_vec(
-        const T & x,
+inline arma::urowvec permute_urowvec(
+        const arma::urowvec & x,
         const arma::uvec & order)
 {
 
@@ -160,7 +103,7 @@ inline T permute_vec(
     if (x.n_elem != order.n_elem)
         Rcpp::stop("size mismatch (permute_vec)!");
 
-    T res(x);
+    arma::urowvec res(size(x));
 
     for (arma::uword k = 0; k < x.n_elem; ++k)
         res(k) = x(order(k));

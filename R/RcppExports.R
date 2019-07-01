@@ -13,35 +13,17 @@
 #' @param max_iter the number of maximum iterations to run, defaults to 100.
 #' @param verbose if TRUE, number of iterations and corresponding KL-distance 
 #'        values are printed. 
-#' @return A Rcpp::List of two elements. A cube, \code{relabeled}, of the same 
-#'         dimensions as \code{phi} but with the labels permuted. 
-#'         \code{perms} is a \code{S} times \code{K} matrix 
-#'         containing the permutations necessary to produce \code{relabeled} 
-#'         from \code{phi} (i.e., the mapping from \code{phi} to 
-#'         \code{relabeled}).
+#' @return A Rcpp::List of three elements. 1) A cube, \code{relabeled}, of 
+#'         the same dimensions as \code{phi} but with the labels permuted. 
+#'         2) \code{perms} is a \code{S} times \code{K} matrix containing 
+#'         the permutations necessary to produce \code{relabeled} from 
+#'         \code{phi} (i.e., the mapping from \code{phi} to \code{relabeled}).
+#'         3) the number of iterations run.
 NULL
 
 relabel_kl <- function(phi, maxit = 100L, verbose = TRUE) {
     .Call('_relabelKL_relabel_kl', PACKAGE = 'relabelKL', phi, maxit, verbose)
 }
-
-#' Logarithm of sum of exponentials 
-#'
-#' @param x any object that allows iterators
-#' @return returns the log of the sum of exponentiated elements of \code{x}
-NULL
-
-#' Logarithm of the sum of the exponential of two real numbers
-#'
-#' @param x,y two real numbers
-#' @return returns the log of the sum of the exponential of \code{x} and \code{y}
-NULL
-
-#' Logarithm of accumulative sum of exponentials
-#'
-#' @param x any object that allows iterators
-#' @return returns the log of the accumulative sum of exponentiated elements of \code{x}
-NULL
 
 #' KL Divergence between two distributions
 #'

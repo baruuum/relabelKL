@@ -17,12 +17,12 @@ using namespace Rcpp;
 //' @param max_iter the number of maximum iterations to run, defaults to 100.
 //' @param verbose if TRUE, number of iterations and corresponding KL-distance 
 //'        values are printed. 
-//' @return A Rcpp::List of two elements. A cube, \code{relabeled}, of the same 
-//'         dimensions as \code{phi} but with the labels permuted. 
-//'         \code{perms} is a \code{S} times \code{K} matrix 
-//'         containing the permutations necessary to produce \code{relabeled} 
-//'         from \code{phi} (i.e., the mapping from \code{phi} to 
-//'         \code{relabeled}).
+//' @return A Rcpp::List of three elements. 1) A cube, \code{relabeled}, of 
+//'         the same dimensions as \code{phi} but with the labels permuted. 
+//'         2) \code{perms} is a \code{S} times \code{K} matrix containing 
+//'         the permutations necessary to produce \code{relabeled} from 
+//'         \code{phi} (i.e., the mapping from \code{phi} to \code{relabeled}).
+//'         3) the number of iterations run.
 
 //[[Rcpp::export]]
 Rcpp::List relabel_kl(const arma::cube & phi, 
@@ -91,7 +91,7 @@ Rcpp::List relabel_kl(const arma::cube & phi,
                 
                 arma::uvec best_perm = perms.row(choose_perm).t();
                 res.slice(s) = permute_mat(P_hat, best_perm, 0L);
-                perm_hist.row(s) = best_perm.t();
+                perm_hist.row(s) = permute_urowvec(perm_hist.row(s), best_perm);
                 
             }
             
@@ -120,7 +120,8 @@ Rcpp::List relabel_kl(const arma::cube & phi,
             
             return Rcpp::List::create(
                 Named("relabeled") = res,
-                Named("perms") = perm_hist);
+                Named("perms") = perm_hist,
+                Named("iterations") = r);
         }
         
         // otherwise, update
@@ -129,6 +130,9 @@ Rcpp::List relabel_kl(const arma::cube & phi,
         
     }
     
-    Rcpp::stop("Reached maximum number of iterations!");
+    return Rcpp::List::create(
+                Named("relabeled") = res,
+                Named("perms") = perm_hist,
+                Named("iterations") = maxit);
 
 }
