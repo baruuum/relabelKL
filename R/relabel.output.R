@@ -28,7 +28,8 @@ relabelMCMC = function(x, maxit = 100, verbose = TRUE) {
         !isTRUE(
             all.equal(
                 apply(x, 3, rowSums), 
-                matrix(1.0, nrow = dim(x)[1], ncol = dim(x)[3])
+                matrix(1.0, nrow = dim(x)[1], ncol = dim(x)[3]),
+                check.attributes = FALSE
             )
         )
     )
@@ -68,17 +69,24 @@ relabelMCMC = function(x, maxit = 100, verbose = TRUE) {
 #' @param perms a \code{S} times \code{K} matrix of permutations needed to
 #'   transformed the raw MCMC output to the permuted output, e.g., the 
 #'   \code{perms} element from running \code{relabelMCMC}.
+#' @param what one of "rows", "cols," or "both". Determines what dimensions
+#'   are permuted. For two-dimensional arrays (i.e., matrices) the columns
+#'   are always permuted.
 #' @return \code{x} permuted according to \code{perms}
 #' @details Given a permutation that resolves the label-switching, this 
 #'   function applies the mapping to another object. If the object to 
 #'   permute is a three-dimensional array of dimension \code{N} times
 #'   \code{K} times \code{S}, the function will treat \code{S} as the 
-#'   number of posterior draws and will permute the columns of the sub-array
-#'   which is of dimensions \code{N} times \code{K}. If \code{x} is a 
-#'   matrix, the function assumes that \code{nrow(x) == S} and 
-#'   \code{ncol(x) == K}.
+#'   number of posterior draws and will permute either the columns or 
+#'   the rows of the sub-array which is of dimensions \code{N} times
+#'    \code{K}. If \code{x} is a matrix, the function assumes that 
+#'    \code{nrow(x) == S} and will permute the columns.
 #' @export
-permuteMCMC = function(x, perms) {
+permuteMCMC = function(x, perms, what) {
+    
+    p.dim = match.arg(what, 
+                      c("rows", "cols", "both"),
+                      several.ok = FALSE)
     
     if (!is.array(x))
         stop("x has to be an array (permuteMCMC)")
@@ -92,13 +100,28 @@ permuteMCMC = function(x, perms) {
     
     if ((n.dim == 2) & ((dim(x)[2] != K) | (dim(x)[1] != S)))
         stop("size mismatch (permuteMCMC)")
+    
+    if ((n.dim == 2) & p.dim %in% c("rows", "both")) 
+        stop("if x is a two-dimensional array, make sure that the rows are the draws and the columns the labels")
+    
+    if ((n.dim == 3) & (p.dim == "both") & (dim(x)[1] != dim(x)[2])) 
+        stop("parameter are not square matrices but 'both' was specified")
         
     
     if (n.dim == 3) {
         
-        res = lapply(1:S, function(s) {
-            x[,perms[s,],s]
-        })
+        res = switch(
+            p.dim,
+            "rows" = lapply(1:S, function(s) {
+                            x[perms[s, ], , s]
+                        }),
+            "cols" = lapply(1:S, function(s) {
+                            x[, perms[s, ], s]
+                        }),
+            "both" = lapply(1:S, function(s) {
+                            x[perms[s, ], perms[s, ],s]
+                        })
+        )
         
         simplify2array(res)
         

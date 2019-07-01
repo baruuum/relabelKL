@@ -4,7 +4,7 @@
 \alias{permuteMCMC}
 \title{Relabel MCMC output based on Permutation Matrix}
 \usage{
-permuteMCMC(x, perms)
+permuteMCMC(x, perms, what)
 }
 \arguments{
 \item{x}{an array of MCMC samples, where the last index has to be equal
@@ -14,6 +14,9 @@ index equal to the number of latent classes/extreme types, \code{K}.}
 \item{perms}{a \code{S} times \code{K} matrix of permutations needed to
 transformed the raw MCMC output to the permuted output, e.g., the 
 \code{perms} element from running \code{relabelMCMC}.}
+
+\item{what}{one of "rows", "cols," or "both". Determines what dimensions
+are permuted}
 }
 \value{
 \code{x} permuted according to \code{perms}
@@ -27,8 +30,8 @@ Given a permutation that resolves the label-switching, this
   function applies the mapping to another object. If the object to 
   permute is a three-dimensional array of dimension \code{N} times
   \code{K} times \code{S}, the function will treat \code{S} as the 
-  number of posterior draws and will permute the columns of the sub-array
-  which is of dimensions \code{N} times \code{K}. If \code{x} is a 
-  matrix, the function assumes that \code{nrow(x) == S} and 
-  \code{ncol(x) == K}.
+  number of posterior draws and will permute either the columns or 
+  the rows of the sub-array which is of dimensions \code{N} times
+   \code{K}. If \code{x} is a matrix, the function assumes that 
+   \code{nrow(x) == S} and will permute the columns.
 }

@@ -28,11 +28,11 @@ will return a list with four elements:
 3. `iterations`: the number of iterations for which the algorithm was run
 4. `status`: which is `0` if the algorithm has successfully converged and `1` otherwise.
 
-There are often other parameters in the model that depend on the labeling of the latent classes / extreme types. The `permuteMCMC` can be used in this situation. After running `relabelMCMC` and obtaining the optimal permutations (or for any other relabeling algorithm that returns the permutation mapping), calling
+There are often other parameters in the model that depend on the labeling of the latent classes / extreme types. The `permuteMCMC` can be used in this situation. Suppose that the object `y` is an three-dimensional array, where the last dimension correspond to `S` posterior draws. After running `relabelMCMC` and obtaining the optimal permutations (or for any other relabeling algorithm that returns the permutation mapping), calling
 ```r
-y.relabeled = permuteMCMC(y, perms = res$perms)
+y.relabeled = permuteMCMC(y, perms = res$perms, what = "cols")
 ```
-will relabel `y` according to `res$perms`. It is important to notice that the `permuteMCMC` function will assume that a three dimensional array is of dimensions `N \times K \times S` and permutes the index corresponding to `K` (i.e, the columns of the "sub"-array of dimension `N \times K`), while it assumes that any matrix (or two-dimensional array) has dimensions `S \times K` and, thus, permutes the column  of that matrix.
+will permute the either the rows or the columns of each of the `S` sub-arrays of `y` according to `res$perms`. It is important to notice that the `permuteMCMC` function will assume that the last index of a three dimensional array represents the posterior draws, so that entering an array of dimensions, say,  `S \times A \times B` will lead to undefined behavior (assuming `S` stands for the draws). When a matrix is passed to the `permuteMCMC` function, it is assumed that it has dimensions `S \times K` and, thus, the function will always permute the columns. Lastly, sometimes we want to permute not only the rows or the columns but both simultaneously (which happens when the parameter of interest is a square matrix). If so, the `what = "both"` option can be used.
 
 
 ## References

@@ -76,12 +76,15 @@ test_that("relabeled array matches permutations", {
 
     res = relabelMCMC(test.ar, verbose = F)    
     
-    expect_equal(permuteMCMC(test.ar, res$perms), res$relabeled)
+    expect_equal(permuteMCMC(test.ar, res$perms, "cols"), res$relabeled)
+    expect_error(permuteMCMC(test.ar, res$perms, "both"))
     
     samp.ind = sample.int(dim(test.ar)[1], 1L)
     expect_equal(
-        permuteMCMC(t(test.ar[samp.ind,,]), res$perms),
+        permuteMCMC(t(test.ar[samp.ind,,]), res$perms, "cols"),
         t(res$relabeled[samp.ind,,])
     )
+    expect_error(permuteMCMC(t(test.ar[samp.ind,,]), res$perms, "rows"))
+    expect_error(permuteMCMC(t(test.ar[samp.ind,,]), res$perms, "both"))
 
 })
