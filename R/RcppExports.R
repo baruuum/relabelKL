@@ -4,8 +4,8 @@
 #' Relabel membership vector by minimizing KL-distance to (unknown) optimal labels
 #' 
 #' Relabels the membership vectors of a mixed membership model or 
-#' mixed membership stochastic blockmodel, by minimizing the KL-distance to 
-#' (unknown) true labels using the method proposed by Stephens (2000).
+#' mixed membership stochastic blockmodel, using the KL-algorithm
+#' proposed by Stephens (2000).
 #' 
 #' @param phi cube of length \code{S}, each element of which is a 
 #'        matrix of dimension N times K, where N is the number of individuals 
@@ -13,13 +13,17 @@
 #' @param max_iter the number of maximum iterations to run, defaults to 100.
 #' @param verbose if TRUE, number of iterations and corresponding KL-distance 
 #'        values are printed. 
-#' @return A Rcpp::List of two elements. A cube, \code{phi_perm}, of the same 
+#' @return A Rcpp::List of two elements. A cube, \code{relabeled}, of the same 
 #'         dimensions as \code{phi} but with the labels permuted. 
-#'         \code{perms} is also of the same dimensions as \code{phi}, 
-#'         but contains the permutations necessary to produce \code{phi} 
-#'         from \code{phi_perm} (i.e., the mapping from \code{phi} to 
-#'         \code{phi_perm}).
+#'         \code{perms} is a \code{S} times \code{K} matrix 
+#'         containing the permutations necessary to produce \code{relabeled} 
+#'         from \code{phi} (i.e., the mapping from \code{phi} to 
+#'         \code{relabeled}).
 NULL
+
+relabel_kl <- function(phi, maxit = 100L, verbose = TRUE) {
+    .Call('_relabelKL_relabel_kl', PACKAGE = 'relabelKL', phi, maxit, verbose)
+}
 
 #' Logarithm of sum of exponentials 
 #'
@@ -79,11 +83,5 @@ NULL
 #' @param order new order (indices have to start from 0)
 #' @param dim if 0, columns are permuted; otherwise, rows are permuted
 #' @return \code{x} permuted in order \code{order}
-NULL
-
-#' Logit transformation of matrix
-#'
-#' @param x a numeric matrix
-#' @return element-wise logit-transformed \code{x}
 NULL
 

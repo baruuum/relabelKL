@@ -3,83 +3,46 @@
 // 
 // using namespace Rcpp;
 // 
-// //' Permute vector
-// //'
-// //' Permutes a row or column vector in a specified order
-// //' 
-// //' @param x vector to permute
-// //' @param order new order (indices have to start from 0)
-// //' @return \code{x} permuted in order \code{order}
-// template <typename T>
-// inline T permute_vec(
-//         const T & x,
-//         const arma::uvec & order)
+// //[[Rcpp::export]]
+// arma::umat gen_permute(
+//         arma::uword N)
 // {
 // 
-//     if (order.min() != 0)
-//         Rcpp::stop("order vector has to start from 0 (permute_vec)!");
+//     // check argument
+//     if (N < 0)
+//         Rcpp::stop("N has to be positive (gen_permute)");
 // 
+//     // no. of possible permutations
+//     arma::uword K = R::gammafn(N + 1);
 // 
-//     if (x.n_elem != order.n_elem)
-//         Rcpp::stop("size mismatch (permute_vec)!");
+//     // original sequence in ascending order
+//     arma::urowvec seq = arma::linspace<arma::urowvec>(0, N - 1, N);
+//     // matrix to store results
+//     arma::umat pmat(K, N, arma::fill::zeros);
 // 
-//     T res(x);
+//     // add org. seq. into the first row
+//     pmat.row(0) = seq;
+//     // iterator
+//     arma::uword it(0L);
 // 
-//     for (arma::uword k = 0; k < x.n_elem; ++k)
-//         res(k) = x(order(k));
-//     
-//     return res;
+//     while(std::next_permutation(seq.begin(), seq.end())) {
 // 
-// };
+//         // note: std::next_permutation will generate the next
+//         //       permutation in lexicographical order and return
+//         //       "false" if the generated sequence is the first seq.
 // 
-// //' Permute rows or columns of matrix
-// //'
-// //' Permutes the rows or the columns of a matrix in a specified order
-// //' 
-// //' @param x matrix to permute
-// //' @param order new order (indices have to start from 0)
-// //' @param dim if 0, columns are permuted; otherwise, rows are permuted
-// //' @return \code{x} permuted in order \code{order}
-// template <typename T>
-// inline T permute_mat(
-//     const T & x,
-//     const arma::uvec & order,
-//     arma::uword dim)
-// {
+//         ++it;
 // 
-//     if (order.min() != 0)
-//         Rcpp::stop("order vector has to start from 0 (permute_mat)!");
+//         pmat.row(it) = seq;
 // 
-//     T res(x);
-//     
-//     if (dim == 0L) {
-//         
-//         if (x.n_cols != order.n_elem)
-//             Rcpp::stop("dimension mismatch (permute_mat)!");
-//         
-//         for (arma::uword i = 0; i < x.n_cols; ++i)
-//             res.col(i) = x.col(order(i));
-//         
-//         return res;
-//         
-//     } 
-//         
-//     if (x.n_rows != order.n_elem)
-//        Rcpp::stop("dimension mismatch (permute_mat)!");
-//     
-//     for (arma::uword i = 0; i < x.n_rows; ++i) 
-//         res.row(i) =  x.row(order(i));
-//     
-//     return res;
+//     }
 // 
-// };
+//     return pmat;
 // 
-// //[[Rcpp::export]]
-// arma::vec tmppermvec(arma::vec x, arma::uvec o) {
-//     return permute_vec(x,o);
 // }
 // 
-// //[[Rcpp::export]]
-// arma::mat tmppermmat(arma::mat x, arma::uvec o, arma::uword d) {
-//     return permute_mat(x,o,d);
-// }
+// 
+// /*** R
+// 
+// gen_permute(3)
+// */

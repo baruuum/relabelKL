@@ -115,8 +115,7 @@ inline arma::umat gen_permute(
     arma::uword K = R::gammafn(N + 1);
 
     // original sequence in ascending order
-    arma::urowvec seq = arma::conv_to<arma::urowvec>::from(
-        arma::linspace(0, N - 1, N));
+    arma::urowvec seq = arma::linspace<arma::urowvec>(0, N - 1, N);
     // matrix to store results
     arma::umat pmat(K, N, arma::fill::zeros);
 
@@ -211,20 +210,5 @@ inline T permute_mat(
     return res;
 
 };
-
-
-
-//' Logit transformation of matrix
-//'
-//' @param x a numeric matrix
-//' @return element-wise logit-transformed \code{x}
-inline arma::mat logit_mat(
-        const arma::mat &x)
-{
-
-    return arma::log(x) - arma::log1p(-x);
-
-};
-
 
 #endif

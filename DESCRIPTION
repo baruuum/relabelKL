@@ -1,7 +1,7 @@
 Package: relabelKL
 Type: Package
 Title: Relabeling MCMC Output
-Version: 0.0.0.9000
+Version: 0.0.1
 Date: 2019-06-30
 Authors@R: person("Barum", "Park", email = "baruuum@gmail.com",
                   role = c("aut", "cre"))
@@ -17,5 +17,6 @@ RoxygenNote: 6.1.1
 Suggests: 
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    label.switching
 VignetteBuilder: knitr

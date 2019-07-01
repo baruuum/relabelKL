@@ -8,8 +8,8 @@ using namespace Rcpp;
 //' Relabel membership vector by minimizing KL-distance to (unknown) optimal labels
 //' 
 //' Relabels the membership vectors of a mixed membership model or 
-//' mixed membership stochastic blockmodel, by minimizing the KL-distance to 
-//' (unknown) true labels using the method proposed by Stephens (2000).
+//' mixed membership stochastic blockmodel, using the KL-algorithm
+//' proposed by Stephens (2000).
 //' 
 //' @param phi cube of length \code{S}, each element of which is a 
 //'        matrix of dimension N times K, where N is the number of individuals 
@@ -17,13 +17,14 @@ using namespace Rcpp;
 //' @param max_iter the number of maximum iterations to run, defaults to 100.
 //' @param verbose if TRUE, number of iterations and corresponding KL-distance 
 //'        values are printed. 
-//' @return A Rcpp::List of two elements. A cube, \code{phi_perm}, of the same 
+//' @return A Rcpp::List of two elements. A cube, \code{relabeled}, of the same 
 //'         dimensions as \code{phi} but with the labels permuted. 
-//'         \code{perms} is also of the same dimensions as \code{phi}, 
-//'         but contains the permutations necessary to produce \code{phi} 
-//'         from \code{phi_perm} (i.e., the mapping from \code{phi} to 
-//'         \code{phi_perm}).
+//'         \code{perms} is a \code{S} times \code{K} matrix 
+//'         containing the permutations necessary to produce \code{relabeled} 
+//'         from \code{phi} (i.e., the mapping from \code{phi} to 
+//'         \code{relabeled}).
 
+//[[Rcpp::export]]
 Rcpp::List relabel_kl(const arma::cube & phi, 
                       arma::uword maxit = 100,
                       bool verbose = true) {
@@ -41,7 +42,7 @@ Rcpp::List relabel_kl(const arma::cube & phi,
     
     // matrix to store permutation history (initialize to 0,1,..K; each row)
     arma::umat perm_hist(S, K);
-    perm_hist.each_row() = perms.row(0);
+    perm_hist.each_row() = perms.row(0L);
         
     // post.mean phi 
     arma::mat Q_hat = mean(phi, 2L);
@@ -88,9 +89,9 @@ Rcpp::List relabel_kl(const arma::cube & phi,
 
             if (choose_perm != 0) {
                 
-                arma::ucolvec best_perm = perms.row(choose_perm).t();
+                arma::uvec best_perm = perms.row(choose_perm).t();
                 res.slice(s) = permute_mat(P_hat, best_perm, 0L);
-                perm_hist.row(s) = permute_vec(perm_hist.row(s), best_perm);
+                perm_hist.row(s) = best_perm.t();
                 
             }
             
@@ -118,7 +119,7 @@ Rcpp::List relabel_kl(const arma::cube & phi,
             }
             
             return Rcpp::List::create(
-                Named("new_labels") = res,
+                Named("relabeled") = res,
                 Named("perms") = perm_hist);
         }
         
@@ -131,5 +132,3 @@ Rcpp::List relabel_kl(const arma::cube & phi,
     Rcpp::stop("Reached maximum number of iterations!");
 
 }
-
-    
