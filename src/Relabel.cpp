@@ -5,7 +5,7 @@
 using namespace Rcpp;
 
 
-//' Relabel membership vector by minimizing KL-distance to (unknown) optimal labels
+//' Relabel membership vector by minimizing KL-algorithm
 //' 
 //' Relabels the membership vectors of a mixed membership model or 
 //' mixed membership stochastic blockmodel, using the KL-algorithm
@@ -17,11 +17,11 @@ using namespace Rcpp;
 //' @param max_iter the number of maximum iterations to run, defaults to 100.
 //' @param verbose if TRUE, number of iterations and corresponding KL-distance 
 //'        values are printed. 
-//' @return A Rcpp::List of three elements. 1) A cube, \code{relabeled}, of 
+//' @return A Rcpp::List of three elements. 1) A cube, \code{permuted}, of 
 //'         the same dimensions as \code{phi} but with the labels permuted. 
 //'         2) \code{perms} is a \code{S} times \code{K} matrix containing 
-//'         the permutations necessary to produce \code{relabeled} from 
-//'         \code{phi} (i.e., the mapping from \code{phi} to \code{relabeled}).
+//'         the permutations necessary to produce \code{permuted} from 
+//'         \code{phi} (i.e., the mapping from \code{phi} to \code{permuted}).
 //'         3) the number of iterations run.
 
 //[[Rcpp::export]]
@@ -119,7 +119,7 @@ Rcpp::List relabel_kl(const arma::cube & phi,
             }
             
             return Rcpp::List::create(
-                Named("relabeled") = res,
+                Named("permuted") = res,
                 Named("perms") = perm_hist,
                 Named("iterations") = r);
         }
@@ -131,7 +131,7 @@ Rcpp::List relabel_kl(const arma::cube & phi,
     }
     
     return Rcpp::List::create(
-                Named("relabeled") = res,
+                Named("permuted") = res,
                 Named("perms") = perm_hist,
                 Named("iterations") = maxit);
 

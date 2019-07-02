@@ -1,6 +1,6 @@
 context("Check Dimensions and Compare with label.swithching package")
 
-has.ls = require(label.switching)
+has.ls = requireNamespace("label.switching", quietly = T)
 
 # function to draw from dirichlet distribution
 rdirichlet = function(N, alpha) {
@@ -27,20 +27,22 @@ test_that("results coincide with stephens function from the label.switching pack
         test.ar = simplify2array(
                     lapply(1:S, function(w) rdirichlet(N, pvec))
                   )
-
+        # reshuffle dimensions to S * N * K
+        test.ar = aperm(test.ar, c(3, 1, 2))
         # randomly relable some of the draws
         rel.draws = sample.int(S, floor(S/4), replace = F)
         for (s in rel.draws) 
-            test.ar[,,s] = test.ar[,sample.int(K, K, F) ,s]
+            test.ar[s, , ] = test.ar[s, , sample.int(K, K, F)]
 
         # results from the label.switching package
         if (has.ls) 
-            res1 = stephens(aperm(test.ar, c(3,1,2)))
+            res1 = label.switching::stephens(test.ar)
+        
         # results of this package
         res2 = relabelMCMC(test.ar, 100, verbose = F)
         
         # check dimensions
-        expect_true(identical(dim(res2$relabeled), dim(test.ar)))
+        expect_true(identical(dim(res2$permuted), dim(test.ar)))
         # each label appears only once in each row
         expect_equal(
             sum(sapply(1:S, function(s) {
@@ -65,26 +67,58 @@ test_that("relabeled array matches permutations", {
     pvec = runif(K, 0.1, 1.0) * runif(1, 0.1, 10)
     S = 100
 
+    # generate array 
     test.ar = simplify2array(
-                    lapply(1:S, function(w) rdirichlet(N, pvec))
-                  )
-
-    # randomly relable some of the draws
+                lapply(1:S, function(w) rdirichlet(N, pvec))
+              )
+    # reshuffle dimensions to S * N * K
+    test.ar = aperm(test.ar, c(3, 1, 2))
+    # randomly relabel some of the draws
     rel.draws = sample.int(S, floor(S/4), replace = F)
     for (s in rel.draws) 
-        test.ar[,,s] = test.ar[,sample.int(K, K, F) ,s]
+        test.ar[s, , ] = test.ar[s, , sample.int(K, K, F)]
 
     res = relabelMCMC(test.ar, verbose = F)    
     
-    expect_equal(permuteMCMC(test.ar, res$perms, "cols"), res$relabeled)
+    expect_equal(permuteMCMC(test.ar, res$perms, "cols"), res$permuted)
     expect_error(permuteMCMC(test.ar, res$perms, "both"))
     
-    samp.ind = sample.int(dim(test.ar)[1], 1L)
+    samp.ind = sample.int(dim(test.ar)[2], 1L)
     expect_equal(
-        permuteMCMC(t(test.ar[samp.ind,,]), res$perms, "cols"),
-        t(res$relabeled[samp.ind,,])
+        permuteMCMC(test.ar[, samp.ind, ], res$perms, "cols"),
+        res$permuted[, samp.ind,]
     )
-    expect_error(permuteMCMC(t(test.ar[samp.ind,,]), res$perms, "rows"))
-    expect_error(permuteMCMC(t(test.ar[samp.ind,,]), res$perms, "both"))
+    expect_error(permuteMCMC(test.ar[, samp.ind, ], res$perms, "rows"))
+    expect_error(permuteMCMC(test.ar[, samp.ind, ], res$perms, "both"))
+    
+})
+
+
+test_that("2nd relabeling results in identity mapping", {
+    
+    # params
+    N = sample(20:100, 1)
+    K = sample(2:4, 1)
+    pvec = runif(K, 0.1, 1.0) * runif(1, 0.1, 10)
+    S = 100
+
+    # generate array 
+    test.ar = simplify2array(
+                lapply(1:S, function(w) rdirichlet(N, pvec))
+              )
+    # reshuffle dimensions to S * N * K
+    test.ar = aperm(test.ar, c(3, 1, 2))
+    # randomly relabel some of the draws
+    rel.draws = sample.int(S, floor(S/4), replace = F)
+    for (s in rel.draws) 
+        test.ar[s, , ] = test.ar[s, , sample.int(K, K, F)]
+
+    res = relabelMCMC(test.ar, verbose = F)    
+    res2 = relabelMCMC(res$permuted, verbose = F)
+    
+    expect_equal(res2$iterations, 0L)
+    expect_equal(res2$status, 0L)
+    expect_equal(res2$permuted, res$permuted)
+    expect_equal(res2$perms, matrix(rep(1:K, S), nr = S, byrow = TRUE))
 
 })

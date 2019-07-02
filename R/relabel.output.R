@@ -2,13 +2,13 @@
 #' 
 #' Relabel MCMC output from finite mixture models using Stephens KL algorithm
 #' 
-#' @param x an \eqn{N \times K \times S} array of MCMC samples containing the
+#' @param x an \code{S}\*\code{N}\*\code{K} array of MCMC samples containing the
 #'   the assignment probabilities to latent classes/extreme types, where
-#'    \eqn{N} is the number of units/individuals, \eqn{K} the number of
-#'    latent classes, and \eqn{S} the number of samples
+#'    \code{N} is the number of units/individuals, \code{K} the number of
+#'    latent classes, and \code{S} the number of posterior samples
 #' @param maxit number of maximum iterations to use in the algorithm
 #' @param verbose if true, prints the intermediate results
-#' @return a list of four elements: \code{relabeled}, the relabeled
+#' @return a list of four elements: \code{permuted}, the relabeled
 #'   array; \code{perms} the permutation pattern used for each sample;
 #'   \code{iterations} the number of iterations that were needed to permute
 #'   the array; and \code{status} with 0 = converged, 1 = not converged.
@@ -27,8 +27,8 @@ relabelMCMC = function(x, maxit = 100, verbose = TRUE) {
     if (
         !isTRUE(
             all.equal(
-                apply(x, 3, rowSums), 
-                matrix(1.0, nrow = dim(x)[1], ncol = dim(x)[3]),
+                apply(x, 1, rowSums), 
+                matrix(1.0, nrow = dim(x)[1], ncol = dim(x)[2]),
                 check.attributes = FALSE
             )
         )
@@ -36,9 +36,11 @@ relabelMCMC = function(x, maxit = 100, verbose = TRUE) {
         stop("rows in x do not sum to one")
     
     # relabel
-    res = relabel_kl(x, maxit, verbose)
-    # change indexing to start from one
+    res = relabel_kl(aperm(x, c(2, 3, 1)), maxit, verbose)
+    # change indexing of permutations to start from one
     res$perms = res$perms + 1L 
+    # change ordering of dimensions 
+    res$permuted = aperm(res$permuted, c(3, 1, 2))
     
     # if maxit was reached, throw warning
     if (res$iterations == maxit) {
@@ -48,7 +50,7 @@ relabelMCMC = function(x, maxit = 100, verbose = TRUE) {
         
     } else {
         
-        res$staus = 0
+        res$status = 0
         
     }
     
@@ -63,24 +65,24 @@ relabelMCMC = function(x, maxit = 100, verbose = TRUE) {
 #' Relabel MCMC output from finite mixture models using the permutations 
 #' found by some algorithm
 #' 
-#' @param x an array of MCMC samples, where the last index has to be equal
-#'   to the number of posterior samples, \code{S}, and the second-to-last
-#'   index equal to the number of latent classes/extreme types, \code{K}.
+#' @param x an array of MCMC samples, where the first index has to be equal
+#'   to the number of posterior samples, \code{S}, and the last index equal 
+#'   to the number of latent classes/extreme types, \code{K}.
 #' @param perms a \code{S} times \code{K} matrix of permutations needed to
 #'   transformed the raw MCMC output to the permuted output, e.g., the 
 #'   \code{perms} element from running \code{relabelMCMC}.
 #' @param what one of "rows", "cols," or "both". Determines what dimensions
-#'   are permuted. For two-dimensional arrays (i.e., matrices) the columns
-#'   are always permuted.
+#'   are permuted. For two-dimensional arrays with unequal dimensions
+#'   (i.e., rectangular matrices), the columns are always permuted.
 #' @return \code{x} permuted according to \code{perms}
 #' @details Given a permutation that resolves the label-switching, this 
 #'   function applies the mapping to another object. If the object to 
-#'   permute is a three-dimensional array of dimension \code{N} times
-#'   \code{K} times \code{S}, the function will treat \code{S} as the 
-#'   number of posterior draws and will permute either the columns or 
-#'   the rows of the sub-array which is of dimensions \code{N} times
-#'    \code{K}. If \code{x} is a matrix, the function assumes that 
-#'    \code{nrow(x) == S} and will permute the columns.
+#'   permute is a three-dimensional array of dimension 
+#'   \code{S}\*\code{N}\*\code{K}, the function will treat \code{S} as the 
+#'   number of posterior draws and will permute either the columns or the
+#'   rows of the sub-array which is of dimensions \code{N}*\code{K}. If
+#'   \code{x} is a matrix, the function assumes that \code{nrow(x) == S} 
+#'   and will permute the columns.
 #' @export
 permuteMCMC = function(x, perms, what) {
     
@@ -95,7 +97,7 @@ permuteMCMC = function(x, perms, what) {
     S = nrow(perms)
     K = ncol(perms)
     
-    if ((n.dim == 3) & ((dim(x)[2] != K) | (dim(x)[3] != S)))
+    if ((n.dim == 3) & ((dim(x)[3] != K) | (dim(x)[1] != S)))
         stop("size mismatch (permuteMCMC)")
     
     if ((n.dim == 2) & ((dim(x)[2] != K) | (dim(x)[1] != S)))
@@ -104,7 +106,7 @@ permuteMCMC = function(x, perms, what) {
     if ((n.dim == 2) & p.dim %in% c("rows", "both")) 
         stop("if x is a two-dimensional array, make sure that the rows are the draws and the columns the labels")
     
-    if ((n.dim == 3) & (p.dim == "both") & (dim(x)[1] != dim(x)[2])) 
+    if ((n.dim == 3) & (p.dim == "both") & (dim(x)[2] != dim(x)[3])) 
         stop("parameter are not square matrices but 'both' was specified")
         
     
@@ -113,17 +115,17 @@ permuteMCMC = function(x, perms, what) {
         res = switch(
             p.dim,
             "rows" = lapply(1:S, function(s) {
-                            x[perms[s, ], , s]
+                            x[s, perms[s, ], ]
                         }),
             "cols" = lapply(1:S, function(s) {
-                            x[, perms[s, ], s]
+                            x[s, , perms[s, ]]
                         }),
             "both" = lapply(1:S, function(s) {
-                            x[perms[s, ], perms[s, ],s]
+                            x[s, perms[s, ], perms[s, ]]
                         })
         )
         
-        simplify2array(res)
+        aperm(simplify2array(res), c(3, 1, 2))
         
     } else if (n.dim == 2) {
         

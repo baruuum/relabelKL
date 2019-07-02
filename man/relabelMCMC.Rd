@@ -7,17 +7,17 @@
 relabelMCMC(x, maxit = 100, verbose = TRUE)
 }
 \arguments{
-\item{x}{an \eqn{N \times K \times S} array of MCMC samples containing the
+\item{x}{an \code{S}\*\code{N}\*\code{K} array of MCMC samples containing the
 the assignment probabilities to latent classes/extreme types, where
- \eqn{N} is the number of units/individuals, \eqn{K} the number of
- latent classes, and \eqn{S} the number of samples}
+ \code{N} is the number of units/individuals, \code{K} the number of
+ latent classes, and \code{S} the number of posterior samples}
 
 \item{maxit}{number of maximum iterations to use in the algorithm}
 
 \item{verbose}{if true, prints the intermediate results}
 }
 \value{
-a list of four elements: \code{relabeled}, the relabeled
+a list of four elements: \code{permuted}, the relabeled
   array; \code{perms} the permutation pattern used for each sample;
   \code{iterations} the number of iterations that were needed to permute
   the array; and \code{status} with 0 = converged, 1 = not converged.

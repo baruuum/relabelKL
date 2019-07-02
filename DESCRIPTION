@@ -18,5 +18,7 @@ Suggests:
     knitr,
     rmarkdown,
     testthat,
-    label.switching
+    label.switching,
+    abind,
+    rstan
 VignetteBuilder: knitr

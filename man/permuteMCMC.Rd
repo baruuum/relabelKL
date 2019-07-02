@@ -7,16 +7,17 @@
 permuteMCMC(x, perms, what)
 }
 \arguments{
-\item{x}{an array of MCMC samples, where the last index has to be equal
-to the number of posterior samples, \code{S}, and the second-to-last
-index equal to the number of latent classes/extreme types, \code{K}.}
+\item{x}{an array of MCMC samples, where the first index has to be equal
+to the number of posterior samples, \code{S}, and the last index equal 
+to the number of latent classes/extreme types, \code{K}.}
 
 \item{perms}{a \code{S} times \code{K} matrix of permutations needed to
 transformed the raw MCMC output to the permuted output, e.g., the 
 \code{perms} element from running \code{relabelMCMC}.}
 
 \item{what}{one of "rows", "cols," or "both". Determines what dimensions
-are permuted}
+are permuted. For two-dimensional arrays with unequal dimensions
+(i.e., rectangular matrices), the columns are always permuted.}
 }
 \value{
 \code{x} permuted according to \code{perms}
@@ -28,10 +29,10 @@ found by some algorithm
 \details{
 Given a permutation that resolves the label-switching, this 
   function applies the mapping to another object. If the object to 
-  permute is a three-dimensional array of dimension \code{N} times
-  \code{K} times \code{S}, the function will treat \code{S} as the 
-  number of posterior draws and will permute either the columns or 
-  the rows of the sub-array which is of dimensions \code{N} times
-   \code{K}. If \code{x} is a matrix, the function assumes that 
-   \code{nrow(x) == S} and will permute the columns.
+  permute is a three-dimensional array of dimension 
+  \code{S}\*\code{N}\*\code{K}, the function will treat \code{S} as the 
+  number of posterior draws and will permute either the columns or the
+  rows of the sub-array which is of dimensions \code{N}*\code{K}. If
+  \code{x} is a matrix, the function assumes that \code{nrow(x) == S} 
+  and will permute the columns.
 }
