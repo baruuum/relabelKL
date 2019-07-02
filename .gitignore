@@ -37,3 +37,6 @@ rsconnect/
 
 # don't track anything starting with "tmp"
 tmp*
+
+# ignore rds files
+*.rds
