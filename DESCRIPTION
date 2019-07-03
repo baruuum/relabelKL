@@ -10,15 +10,18 @@ Description: Relabeling algorithm proposed by Stephens (2000) to
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 3.5.0)
 Imports: 
-    Rcpp
+    Rcpp (>= 1.0.1)
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.1.1
 Suggests: 
     knitr,
     rmarkdown,
-    testthat,
-    label.switching,
-    abind,
-    rstan
+    testthat (>= 2.0.1),
+    label.switching (>= 1.7),
+    abind (>= 1.4-5),
+    rstan (>= 2.18.2),
+    ggplot2 (>= 3.1.0),
+    reshape2 (>= 1.4.3)
 VignetteBuilder: knitr

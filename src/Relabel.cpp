@@ -55,7 +55,7 @@ Rcpp::List relabel_kl(const arma::cube & phi,
     meankl = meankl / S;
     
     if (verbose) 
-        Rcpp::Rcout << "Starting Fixed-Point Iterations ... \n" << std::endl;
+        Rcpp::Rcout << "\nStarting Fixed-Point Iterations ... \n" << std::endl;
     
     // START FIXED POINT INTERATIONS //
     
@@ -114,7 +114,7 @@ Rcpp::List relabel_kl(const arma::cube & phi,
                     std::fixed <<
                     "Converged!   ( Final KL-divergence : " <<
                     meankl <<
-                    " )" <<
+                    " )\n" <<
                     std::endl;
             }
             

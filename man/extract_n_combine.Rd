@@ -2,17 +2,14 @@
 % Please edit documentation in R/relabel.stanfit.R
 \name{extract_n_combine}
 \alias{extract_n_combine}
-\title{Extract parameters into an array from stanfit object}
+\title{Extract parameters into a long array from stanfit object}
 \usage{
-extract_n_combine(fit, par, p.dims)
+extract_n_combine(fit, par)
 }
 \arguments{
 \item{fit}{a stanfit object}
 
 \item{par}{parameter to extract}
-
-\item{p.dims}{a named list which includes an element with the same name
-as \code{par} and which includes the dimensions of the parameter}
 }
 \value{
 an array of the extracted samples
@@ -23,5 +20,8 @@ which combines posterior samples across the MCMC chains *without*
 permuting the indices, *excluding* the warmup phase, and returning
 an object with the first dimension equal to the number of saved
 posterior samples and the other dimensions equal to those specified
-in the Stan program
+in the original Stan program (e.g., if parameter \code{x} was 
+specified as \code{matrix[K,K]}, the resulting array will have dimensions
+\code{S}\*\code{K}\*\code{K}, where \code{S} is the number of 
+post-warmup posterior samples.)
 }

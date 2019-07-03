@@ -54,8 +54,12 @@ relabelMCMC = function(x, maxit = 100, verbose = TRUE) {
         
     }
     
+    # add attributes of original array
+    attr(res$permuted, "par") = attr(x, "par")
+    attr(res$permuted, "org.att") = attr(x, "org.att")
+    
     # return object
-    return(res)
+    res
     
  
 }
@@ -125,15 +129,11 @@ permuteMCMC = function(x, perms, what) {
                         })
         )
         
-        aperm(simplify2array(res), c(3, 1, 2))
+        res = aperm(simplify2array(res), c(3, 1, 2))
         
     } else if (n.dim == 2) {
         
-        t(
-            sapply(1:S, function(s) {
-                x[s, perms[s,]]
-            })
-        )
+        res = t(sapply(1:S, function(s) { x[s, perms[s, ]] }))
         
     } else {
 
@@ -141,4 +141,9 @@ permuteMCMC = function(x, perms, what) {
         
     }
     
+    # carry over attributes
+    attr(res, "par") = attr(x, "par")
+    attr(res, "org.att") = attr(x, "org.att")
+    
+    res
 }
