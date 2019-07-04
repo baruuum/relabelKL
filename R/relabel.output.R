@@ -2,13 +2,13 @@
 #' 
 #' Relabel MCMC output from finite mixture models using Stephens KL algorithm
 #' 
-#' @param x an \code{S}\*\code{N}\*\code{K} array of MCMC samples containing the
-#'   the assignment probabilities to latent classes/extreme types, where
-#'    \code{N} is the number of units/individuals, \code{K} the number of
-#'    latent classes, and \code{S} the number of posterior samples
+#' @param x an \code{S}\*\code{N}\*\code{K} array of MCMC samples containing
+#'   the the assignment probabilities to latent classes/extreme types, where
+#'   \code{N} is the number of units/individuals, \code{K} the number of
+#'   latent classes, and \code{S} the number of posterior samples
 #' @param maxit number of maximum iterations to use in the algorithm
 #' @param verbose if true, prints the intermediate results
-#' @return a list of four elements: \code{permuted}, the relabeled
+#' @return Returns a list of four elements: \code{permuted}, the relabeled
 #'   array; \code{perms} the permutation pattern used for each sample;
 #'   \code{iterations} the number of iterations that were needed to permute
 #'   the array; and \code{status} with 0 = converged, 1 = not converged.
@@ -78,7 +78,7 @@ relabelMCMC = function(x, maxit = 100, verbose = TRUE) {
 #' @param what one of "rows", "cols," or "both". Determines what dimensions
 #'   are permuted. For two-dimensional arrays with unequal dimensions
 #'   (i.e., rectangular matrices), the columns are always permuted.
-#' @return \code{x} permuted according to \code{perms}
+#' @return returns \code{x} permuted according to \code{perms}
 #' @details Given a permutation that resolves the label-switching, this 
 #'   function applies the mapping to another object. If the object to 
 #'   permute is a three-dimensional array of dimension 

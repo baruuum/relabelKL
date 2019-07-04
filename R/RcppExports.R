@@ -10,7 +10,7 @@
 #' @param phi cube of length \code{S}, each element of which is a 
 #'        matrix of dimension N times K, where N is the number of individuals 
 #'        and K is the number of extreme types (or classes).
-#' @param max_iter the number of maximum iterations to run, defaults to 100.
+#' @param maxit the number of maximum iterations to run, defaults to 100.
 #' @param verbose if TRUE, number of iterations and corresponding KL-distance 
 #'        values are printed. 
 #' @return A Rcpp::List of three elements. 1) A cube, \code{permuted}, of 
@@ -19,8 +19,9 @@
 #'         the permutations necessary to produce \code{permuted} from 
 #'         \code{phi} (i.e., the mapping from \code{phi} to \code{permuted}).
 #'         3) the number of iterations run.
-NULL
-
+#' @details OpenMP is enabled if available. Due to overhead, the inner-most
+#'         loop is parallelized only if the number of latent classes/types
+#'         is larger than 3.
 relabel_kl <- function(phi, maxit = 100L, verbose = TRUE) {
     .Call('_relabelKL_relabel_kl', PACKAGE = 'relabelKL', phi, maxit, verbose)
 }

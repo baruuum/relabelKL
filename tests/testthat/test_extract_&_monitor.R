@@ -35,5 +35,9 @@ test_that("extract and back-transformation works", {
     array_traceplot(arr.theta, 'theta')
     array_traceplot(arr.theta, 'theta[1,1]')
     
+    rel = relabelMCMC(stan.pi, 50, TRUE)
+    re.theta = permuteMCMC(stan.theta, rel$perms, "both")
+    array_traceplot(to_stan_array(re.theta), "theta")
+    
 })
 
