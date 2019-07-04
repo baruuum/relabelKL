@@ -1,8 +1,18 @@
 #include <RcppArmadillo.h>
 #include "utils.h"
+
 //[[Rcpp::depends(RcppArmadillo)]]
 
 using namespace Rcpp;
+
+
+// add openmp support if available
+#ifdef _OPENMP
+
+  #include <omp.h>
+  //[[Rcpp::plugins(openmp)]]
+  
+#endif
 
 
 //' Relabel membership vector by minimizing KL-algorithm
@@ -12,21 +22,23 @@ using namespace Rcpp;
 //' proposed by Stephens (2000).
 //' 
 //' @param phi cube of length \code{S}, each element of which is a 
-//'        matrix of dimension N times K, where N is the number of individuals 
-//'        and K is the number of extreme types (or classes).
-//' @param max_iter the number of maximum iterations to run, defaults to 100.
+//'     matrix of dimension N times K, where N is the number of individuals 
+//'     and K is the number of extreme types (or classes).
+//' @param maxit the number of maximum iterations to run, defaults to 100.
 //' @param verbose if TRUE, number of iterations and corresponding KL-distance 
-//'        values are printed. 
-//' @return A Rcpp::List of three elements. 1) A cube, \code{permuted}, of 
-//'         the same dimensions as \code{phi} but with the labels permuted. 
-//'         2) \code{perms} is a \code{S} times \code{K} matrix containing 
-//'         the permutations necessary to produce \code{permuted} from 
-//'         \code{phi} (i.e., the mapping from \code{phi} to \code{permuted}).
-//'         3) the number of iterations run.
-
+//'     values are printed. 
+//' @return The function returns a Rcpp::List of three elements. 
+//'     1) A cube, \code{permuted}, of the same dimensions as \code{phi} but 
+//'     with the labels permuted; 2) \code{perms} is a \code{S} times \code{K} 
+//'     matrix containing the permutations necessary to produce \code{permuted} 
+//'     from \code{phi} (i.e., the mapping from \code{phi} to \code{permuted});
+//'     and 3) the number of iterations run.
+//' @details OpenMP is enabled if available. Due to overhead, the inner-most
+//'     loop is parallelized only if the number of latent classes/types
+//'     is larger than 3.
 //[[Rcpp::export]]
 Rcpp::List relabel_kl(const arma::cube & phi, 
-                      arma::uword maxit = 100,
+                      arma::uword maxit = 100L,
                       bool verbose = true) {
 
     arma::uword S = phi.n_slices;   // no. sims
@@ -50,8 +62,20 @@ Rcpp::List relabel_kl(const arma::cube & phi,
     // initial avg. KL-dist to post.mean
     arma::uword s;
     double meankl(0.0);
+    
+#ifndef _OPENMP
+        
     for (s = 0; s < S; ++s)
         meankl += kl_dist(res.slice(s), Q_hat);
+        
+#else
+        
+    #pragma omp parallel for reduction(+: meankl) 
+    for (s = 0; s < S; ++s) 
+        meankl += kl_dist(res.slice(s), Q_hat);
+
+#endif 
+    
     meankl = meankl / S;
     
     if (verbose) 
@@ -76,14 +100,41 @@ Rcpp::List relabel_kl(const arma::cube & phi,
             
             arma::mat P_hat = res.slice(s);
             arma::colvec kl_q(n_perms);
+    
             
             // calc permutation that minimizes KL-dist to p
-            for (arma::uword n = 0; n < n_perms; ++n) {
+            arma::uword n;
+            
+#ifndef _OPENMP
+            
+            for (n = 0; n < n_perms; ++n) {
                 
-                arma::mat q_perm = permute_mat(P_hat, perms.row(n).t(), 0L);
-                kl_q(n) = kl_dist(q_perm, Q_hat);
+                kl_q(n) = kl_dist(permute_mat(P_hat, perms.row(n).t(), 0L), Q_hat);
                 
             }
+#else 
+            
+            if (K > 3) {
+                
+                #pragma omp parallel for 
+                for (n = 0; n < n_perms; ++n) {
+                        
+                        kl_q(n) = kl_dist(permute_mat(P_hat, perms.row(n).t(), 0L), Q_hat);
+                    
+                }
+                
+            } else {
+                
+                for (n = 0; n < n_perms; ++n) {
+                    
+                    kl_q(n) = kl_dist(permute_mat(P_hat, perms.row(n).t(), 0L), Q_hat);
+                    
+                }
+                
+            }
+            
+#endif
+
             // index of min-KL permutation
             arma::uword choose_perm = kl_q.index_min();
 
@@ -99,12 +150,24 @@ Rcpp::List relabel_kl(const arma::cube & phi,
         
         // update Q_hat and meankl
         arma::mat Q_hat_new = arma::mean(res, 2);
-        
         double meankl_new(0.0);
+
+#ifndef _OPENMP
+
         for (s = 0; s < S; ++s) 
             meankl_new += kl_dist(res.slice(s), Q_hat_new);
-        meankl_new = meankl_new / S;
 
+#else
+        
+        #pragma omp parallel for reduction(+: meankl_new) 
+        for (s = 0; s < S; ++s) {
+            meankl_new += kl_dist(res.slice(s), Q_hat_new);
+        }
+
+#endif
+
+        meankl_new = meankl_new / S;
+        
         // if there is no change, return
         if (meankl_new == meankl) {
             

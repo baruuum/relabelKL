@@ -12,7 +12,7 @@
 #'
 #' @param fit a stanfit object
 #' @param par parameter to extract
-#' @return an array of the extracted samples
+#' @return the function returns an array of the extracted samples
 #' @export
 extract_n_combine = function(fit, par) {
 
@@ -51,7 +51,8 @@ extract_n_combine = function(fit, par) {
 #' \code{inc_warmup = FALSE}.
 #'
 #' @param x an array created by calling \code{extract_n_combine}
-#' @return an reshaped array which is callable by \code{stan::monitor}.
+#' @return the function returns a reshaped array which is callable by
+#'     \code{rstan::monitor} or \code{relabelKL::array_traceplot}
 #' @export
 to_stan_array = function(x) {
     
@@ -101,7 +102,7 @@ to_stan_array = function(x) {
 #'
 #' @param x an array created by calling \code{extract_n_combine}
 #' @param par name of the parameter to plot
-#' @return a \code{ggplot} object of the traceplot
+#' @return the function returns a \code{ggplot} object of the traceplot
 #' @export
 array_traceplot = function(x, par) {
     
