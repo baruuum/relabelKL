@@ -52,7 +52,7 @@ extract_n_combine = function(fit, par) {
 #'
 #' @param x an array created by calling \code{extract_n_combine}
 #' @return the function returns a reshaped array which is callable by
-#'     \code{rstan::monitor} or \code{relabelKL::array_traceplot}
+#'     \code{rstan::monitor} or \code{\link{array_traceplot}}
 #' @export
 to_stan_array = function(x) {
     
