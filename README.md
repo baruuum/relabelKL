@@ -66,6 +66,63 @@ array_traceplot(to_stan_array(rel.theta.arr), par = "theta")
 ```
 The call will produce a `ggplot` object containing the traceplot of the single element `pi[1,2]` of the `pi` matrix; the secon call will produce a traceplot of all elements in the `theta` parameter.
 
+## Comparison to `label.switching::stephens`
+
+A simple comparison with the `stephens` function of the `label.switching` package might offer some insights into the efficiency gains. We first draw some random vectors that sum to one using the Dirichlet distribution.
+
+```r
+# set seed and dimensions
+set.seed(123)
+N = 30
+K = 4
+S = 1000
+
+# generate random draws from Dirichlet
+alpha = runif(1, 1, 5) * runif(K)
+x = replicate(S, gtools::rdirichlet(N, alpha))
+
+# reshape array to S * N * K
+x = aperm(x, c(3, 1, 2))
+```
+
+Now, rigorous benchmarking will be super time-consuming; but as the difference in speed are quite large, we might use the `Sys.time()` function to get a sense of the efficiency gain. First, we use the `stephens` function of the `label.switching` package:
+
+```r
+# fit label.switching::stephens
+start_t = Sys.time()
+res1 = label.switching::stephens(x)
+end_t = Sys.time()
+print(end_t - start_t)
+```
+    
+    Time difference of 3.256903 mins
+    
+Next, we use the `relabelMCMC` function:
+
+```r
+# fit relabelKL::relabelMCMC
+start_t = Sys.time()
+res2 = relabelKL::relabelMCMC(x, maxit = 100L, verbose = FALSE)
+end_t = Sys.time()
+print(end_t - start_t)
+```
+
+    Time difference of 7.258507 secs
+    
+Notice that it took **minutes** to relabel the draws with the `stephens` function but only **seconds** with the `relabelMCMC` function. Lastly, we make sure that the results agree as well.
+
+```r
+sum(res1$permutations != res2$perms)
+```
+
+    [1] 0
+    
+
+## Possible future extensions
+
+1. Right now, the algorithm uses a *brute force* approach by comparing all permutations between the labels to minimize the KL-divergence. If the number of classes/extreme types gets large, this approach might become inefficient since the number of comparisons grows at the order of `K!`. The problem of minimizing the KL-divergence can be, however, formulated as an integer assignment problem for which better algorithms exists. Incorporating these might produce gains in efficiency.
+2. Other relabeling algorithms might be rewritten in `C++` for faster implementation. The translation of algorithms contained in the `label.switching` package, for example, would be quite stratightforward.
+
 ## References
 
 Stephens, M. 2000. "Dealing with label Switching in mixture models," *Journal of the Royal Statistical Society Series B*, 62, 795-809.
