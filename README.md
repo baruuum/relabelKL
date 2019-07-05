@@ -117,6 +117,8 @@ sum(res1$permutations != res2$perms)
 
     [1] 0
     
+Other tests that were run to ensure that the algorithm works correctly can be found in the `/tests` directory of this gitub repo.
+
 
 ## Possible future extensions
 
