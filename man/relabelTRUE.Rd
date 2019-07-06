@@ -13,11 +13,11 @@ the the assignment probabilities to latent classes/extreme types, where
 \code{N} is the number of units/individuals, \code{K} the number of
 latent classes, and \code{S} the number of posterior samples}
 
+\item{x.true}{matrix of dimension \code{N}\*\code{K} which contains the 
+true assignment/mixed-membership probabilities}
+
 \item{verbose}{if true, prints KL-divergence to true probabilities before
 and after relabeling}
-
-\item{x_true}{matrix of dimension \code{N}\*\code{K} which contains the 
-true assignment/mixed-membership probabilities}
 }
 \value{
 Returns a list of two elements: \code{permuted}, the relabeled

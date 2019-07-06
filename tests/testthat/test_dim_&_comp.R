@@ -140,13 +140,15 @@ test_that("relabelTRUE throws appropriate errors", {
     # sample true prob mat
     true = rdirichlet(N, pvec)
     
-    # relabel
     expect_error(relabelTRUE(test.ar, true, FALSE))
     expect_error(relabelTRUE(aperm(test.ar, c(3,1,2)), t(true), FALSE))
+    
+    # relabel
     res1 = relabelTRUE(aperm(test.ar, c(3,1,2)), true, FALSE)
-    test.ar2 = res1$permuted
+    
     # relabel a second time
-    res2 = relabelTRUE(test.ar2, true, TRUE)
+    test.ar2 = res1$permuted
+    res2 = relabelTRUE(test.ar2, true, FALSE)
 
     expect_true(all.equal(res1$permuted, res2$permuted))
     expect_false(isTRUE(all.equal(res1$perms, res2$perms)))
