@@ -75,7 +75,7 @@ relabelMCMC = function(x, maxit = 100, verbose = TRUE) {
 #'   the the assignment probabilities to latent classes/extreme types, where
 #'   \code{N} is the number of units/individuals, \code{K} the number of
 #'   latent classes, and \code{S} the number of posterior samples
-#' @param x_true matrix of dimension \code{N}\*\code{K} which contains the 
+#' @param x.true matrix of dimension \code{N}\*\code{K} which contains the 
 #'   true assignment/mixed-membership probabilities
 #' @param verbose if true, prints KL-divergence to true probabilities before
 #'   and after relabeling
