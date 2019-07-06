@@ -36,7 +36,7 @@ relabel_kl <- function(phi, maxit = 100L, verbose = TRUE) {
 #'   dimension \code{N} times \code{K}, where \code{N} is the number of 
 #'   individuals and K is the number of extreme types (or classes).
 #' @param phi_true a \code{N} times \code{K} matrix containing the "true"
-#'   labels
+#'   values of latent-class/mixed-membership probabilities
 #' @param verbose if true, KL-divergence from true labels is calculated
 #'   and printed before and after relabeling
 #' @return Returns a Rcpp::List with two elements: 1) A arma::cube, 

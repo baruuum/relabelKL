@@ -212,7 +212,7 @@ Rcpp::List relabel_kl(const arma::cube & phi,
 //'   dimension \code{N} times \code{K}, where \code{N} is the number of 
 //'   individuals and K is the number of extreme types (or classes).
 //' @param phi_true a \code{N} times \code{K} matrix containing the "true"
-//'   labels
+//'   values of latent-class/mixed-membership probabilities
 //' @param verbose if true, KL-divergence from true labels is calculated
 //'   and printed before and after relabeling
 //' @return Returns a Rcpp::List with two elements: 1) A arma::cube, 
@@ -237,7 +237,7 @@ Rcpp::List relabel_true(
     // generate matrix of possible permutations
     arma::umat perms = gen_permute(K);    
 
-        // no. permutations
+    // no. permutations
     arma::uword n_perms = perms.n_rows;     
     
     // matrix to store permutation history (initialize to 0,1,..K; each row)
@@ -258,12 +258,12 @@ Rcpp::List relabel_true(
             meankl += kl_dist(res.slice(s), phi_true);
         
 #else
-        
-        #pragma omp parallel for reduction(+: meankl) 
-        for (s = 0; s < S; ++s) 
+
+        #pragma omp parallel for reduction(+: meankl)
+        for (s = 0; s < S; ++s)
             meankl += kl_dist(res.slice(s), phi_true);
 
-#endif 
+#endif
     
         meankl = meankl / S;
     
@@ -271,6 +271,7 @@ Rcpp::List relabel_true(
             std::setprecision(3) <<
             std::fixed <<
             "KL-divergence from true labels before relabeling : " <<
+            meankl <<
             std::endl;
 
     }
@@ -293,15 +294,15 @@ Rcpp::List relabel_true(
             
         }
         
-#else 
-            
+#else
+
         #pragma omp parallel for if (K > 3)
         for (n = 0; n < n_perms; ++n) {
-                
+
                 kl_q(n) = kl_dist(permute_mat(P_hat, perms.row(n).t(), 0L), phi_true);
-            
+
         }
-            
+
 #endif
 
         // index of min-KL permutation
@@ -328,8 +329,8 @@ Rcpp::List relabel_true(
             meankl_new += kl_dist(res.slice(s), phi_true);
 
 #else
-        
-        #pragma omp parallel for reduction(+: meankl_new) 
+
+        #pragma omp parallel for reduction(+: meankl_new)
         for (s = 0; s < S; ++s) {
             meankl_new += kl_dist(res.slice(s), phi_true);
         }
@@ -341,7 +342,7 @@ Rcpp::List relabel_true(
             Rcpp::Rcout << 
                 std::setprecision(3) <<
                 std::fixed <<
-                "KL-divergence from true labels after relabeling " <<
+                "KL-divergence from true labels after relabeling : " <<
                 meankl_new <<
                 std::endl;
             
