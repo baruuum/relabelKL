@@ -10,7 +10,8 @@ to_stan_array(x)
 \item{x}{an array created by calling \code{extract_n_combine}}
 }
 \value{
-an reshaped array which is callable by \code{stan::monitor}.
+the function returns a reshaped array which is callable by
+    \code{rstan::monitor} or \code{\link{array_traceplot}}
 }
 \description{
 Collpases the long-form array created by \code{extract_n_combine} into

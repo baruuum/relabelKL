@@ -12,7 +12,7 @@ extract_n_combine(fit, par)
 \item{par}{parameter to extract}
 }
 \value{
-an array of the extracted samples
+the function returns an array of the extracted samples
 }
 \description{
 Extracts MCMC samples stored in a stanfit objects and creats an array

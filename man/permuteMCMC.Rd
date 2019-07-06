@@ -20,7 +20,7 @@ are permuted. For two-dimensional arrays with unequal dimensions
 (i.e., rectangular matrices), the columns are always permuted.}
 }
 \value{
-\code{x} permuted according to \code{perms}
+returns \code{x} permuted according to \code{perms}
 }
 \description{
 Relabel MCMC output from finite mixture models using the permutations 

@@ -12,7 +12,7 @@ array_traceplot(x, par)
 \item{par}{name of the parameter to plot}
 }
 \value{
-a \code{ggplot} object of the traceplot
+the function returns a \code{ggplot} object of the traceplot
 }
 \description{
 Plots traceplot for Stan-form arrays

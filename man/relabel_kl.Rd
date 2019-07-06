@@ -17,12 +17,12 @@ and K is the number of extreme types (or classes).}
 values are printed.}
 }
 \value{
-A Rcpp::List of three elements. 1) A cube, \code{permuted}, of 
-        the same dimensions as \code{phi} but with the labels permuted. 
-        2) \code{perms} is a \code{S} times \code{K} matrix containing 
-        the permutations necessary to produce \code{permuted} from 
-        \code{phi} (i.e., the mapping from \code{phi} to \code{permuted}).
-        3) the number of iterations run.
+The function returns a Rcpp::List of three elements. 
+    1) A cube, \code{permuted}, of the same dimensions as \code{phi} but 
+    with the labels permuted; 2) \code{perms} is a \code{S} times \code{K} 
+    matrix containing the permutations necessary to produce \code{permuted} 
+    from \code{phi} (i.e., the mapping from \code{phi} to \code{permuted});
+    and 3) the number of iterations run.
 }
 \description{
 Relabels the membership vectors of a mixed membership model or 
@@ -31,6 +31,6 @@ proposed by Stephens (2000).
 }
 \details{
 OpenMP is enabled if available. Due to overhead, the inner-most
-        loop is parallelized only if the number of latent classes/types
-        is larger than 3.
+    loop is parallelized only if the number of latent classes/types
+    is larger than 3.
 }

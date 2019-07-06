@@ -77,6 +77,8 @@ test_that("relabeled array matches permutations", {
     rel.draws = sample.int(S, floor(S/4), replace = F)
     for (s in rel.draws) 
         test.ar[s, , ] = test.ar[s, , sample.int(K, K, F)]
+    
+    expect_error(relabelMCMC(aperm(test.ar, c(2,3,1)), verbose = F))
 
     res = relabelMCMC(test.ar, verbose = F)    
     
@@ -120,5 +122,36 @@ test_that("2nd relabeling results in identity mapping", {
     expect_equal(res2$status, 0L)
     expect_equal(res2$permuted, res$permuted)
     expect_equal(res2$perms, matrix(rep(1:K, S), nr = S, byrow = TRUE))
+
+})
+
+test_that("relabelTRUE throws appropriate errors", {
+    
+    # params
+    N = sample(20:100, 1)
+    K = sample(2:4, 1)
+    pvec = runif(K, 0.1, 1.0) * runif(1, 0.1, 10)
+    S = 100
+
+    # generate array 
+    test.ar = simplify2array(
+                lapply(1:S, function(w) rdirichlet(N, pvec))
+              )
+    # sample true prob mat
+    true = rdirichlet(N, pvec)
+    
+    expect_error(relabelTRUE(test.ar, true, FALSE))
+    expect_error(relabelTRUE(aperm(test.ar, c(3,1,2)), t(true), FALSE))
+    
+    # relabel
+    res1 = relabelTRUE(aperm(test.ar, c(3,1,2)), true, FALSE)
+    
+    # relabel a second time
+    test.ar2 = res1$permuted
+    res2 = relabelTRUE(test.ar2, true, FALSE)
+
+    expect_true(all.equal(res1$permuted, res2$permuted))
+    expect_false(isTRUE(all.equal(res1$perms, res2$perms)))
+    expect_true(all.equal(res2$perms, matrix(rep(1:K, S), nr = S, byrow = T)))
 
 })

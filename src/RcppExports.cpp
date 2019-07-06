@@ -19,9 +19,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// relabel_true
+Rcpp::List relabel_true(const arma::cube& phi, const arma::mat& phi_true, bool verbose);
+RcppExport SEXP _relabelKL_relabel_true(SEXP phiSEXP, SEXP phi_trueSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cube& >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type phi_true(phi_trueSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(relabel_true(phi, phi_true, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_relabelKL_relabel_kl", (DL_FUNC) &_relabelKL_relabel_kl, 3},
+    {"_relabelKL_relabel_true", (DL_FUNC) &_relabelKL_relabel_true, 3},
     {NULL, NULL, 0}
 };
 

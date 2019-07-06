@@ -64,6 +64,78 @@ relabelMCMC = function(x, maxit = 100, verbose = TRUE) {
  
 }
 
+#' Relabel MCMC output by minimizing KL-divergence to true assignment 
+#' probabilities
+#' 
+#' Relabels the membership vectors of a mixed membership model or 
+#' mixed membership stochastic blockmodel, by minimizing the KL-divergence
+#' to a priori known true labels.
+#'  
+#' @param x an \code{S}\*\code{N}\*\code{K} array of MCMC samples containing
+#'   the the assignment probabilities to latent classes/extreme types, where
+#'   \code{N} is the number of units/individuals, \code{K} the number of
+#'   latent classes, and \code{S} the number of posterior samples
+#' @param x.true matrix of dimension \code{N}\*\code{K} which contains the 
+#'   true assignment/mixed-membership probabilities
+#' @param verbose if true, prints KL-divergence to true probabilities before
+#'   and after relabeling
+#' @return Returns a list of two elements: \code{permuted}, the relabeled
+#'   array and, \code{perms}, the permutation pattern used for each sample
+#' @export
+relabelTRUE = function(x, x.true, verbose = FALSE) {
+    
+    if (!is.array(x))
+        stop("x has to be an array")
+    
+    if (length(dim(x)) != 3L)
+        stop("x has to be a three-dimensional array")
+    
+    if (sum(x < 0 | x > 1) > 0)
+        stop("all elements in x have to lie between zero and one")
+    
+    if (sum(x.true < 0 | x.true > 1) > 0)
+        stop("all elements in x.true have to lie between zero and one")
+    
+    if (
+        !isTRUE(
+            all.equal(
+                apply(x, 1, rowSums), 
+                matrix(1.0, nrow = dim(x)[1], ncol = dim(x)[2]),
+                check.attributes = FALSE
+            )
+        )
+    )
+        stop("rows in x do not sum to one")
+    
+    if (
+        !isTRUE(
+            all.equal(
+                rowSums(x.true),
+                rep(1.0, nrow(x.true)),
+                check.attributes = F
+            )
+        )
+    )
+        stop("rows in x.true do not sum to one")
+    
+    # relabel
+    res = relabel_true(aperm(x, c(2, 3, 1)), x.true, verbose)
+    # change indexing of permutations to start from one
+    res$perms = res$perms + 1L 
+    # change ordering of dimensions 
+    res$permuted = aperm(res$permuted, c(3, 1, 2))
+    
+    # add attributes of original array
+    attr(res$permuted, "par") = attr(x, "par")
+    attr(res$permuted, "org.att") = attr(x, "org.att")
+    
+    # return object
+    res
+
+}
+
+
+
 #' Relabel MCMC output based on Permutation Matrix
 #' 
 #' Relabel MCMC output from finite mixture models using the permutations 

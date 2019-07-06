@@ -8,22 +8,47 @@
 #' proposed by Stephens (2000).
 #' 
 #' @param phi cube of length \code{S}, each element of which is a 
-#'        matrix of dimension N times K, where N is the number of individuals 
-#'        and K is the number of extreme types (or classes).
+#'     matrix of dimension N times K, where N is the number of individuals 
+#'     and K is the number of extreme types (or classes).
 #' @param maxit the number of maximum iterations to run, defaults to 100.
 #' @param verbose if TRUE, number of iterations and corresponding KL-distance 
-#'        values are printed. 
-#' @return A Rcpp::List of three elements. 1) A cube, \code{permuted}, of 
-#'         the same dimensions as \code{phi} but with the labels permuted. 
-#'         2) \code{perms} is a \code{S} times \code{K} matrix containing 
-#'         the permutations necessary to produce \code{permuted} from 
-#'         \code{phi} (i.e., the mapping from \code{phi} to \code{permuted}).
-#'         3) the number of iterations run.
+#'     values are printed. 
+#' @return The function returns a Rcpp::List of three elements. 
+#'     1) A cube, \code{permuted}, of the same dimensions as \code{phi} but 
+#'     with the labels permuted; 2) \code{perms} is a \code{S} times \code{K} 
+#'     matrix containing the permutations necessary to produce \code{permuted} 
+#'     from \code{phi} (i.e., the mapping from \code{phi} to \code{permuted});
+#'     and 3) the number of iterations run.
 #' @details OpenMP is enabled if available. Due to overhead, the inner-most
-#'         loop is parallelized only if the number of latent classes/types
-#'         is larger than 3.
+#'     loop is parallelized only if the number of latent classes/types
+#'     is larger than 3.
 relabel_kl <- function(phi, maxit = 100L, verbose = TRUE) {
     .Call('_relabelKL_relabel_kl', PACKAGE = 'relabelKL', phi, maxit, verbose)
+}
+
+#' Relabel membership vector by minimizing KL-algorithm to true labels
+#' 
+#' Relabels the membership vectors of a mixed membership model or 
+#' mixed membership stochastic blockmodel, by minimizing the KL-divergence
+#' to a priori known true labels.
+#' 
+#' @param phi cube of length \code{S}, each element of which is a matrix of 
+#'   dimension \code{N} times \code{K}, where \code{N} is the number of 
+#'   individuals and K is the number of extreme types (or classes).
+#' @param phi_true a \code{N} times \code{K} matrix containing the "true"
+#'   values of latent-class/mixed-membership probabilities
+#' @param verbose if true, KL-divergence from true labels is calculated
+#'   and printed before and after relabeling
+#' @return Returns a Rcpp::List with two elements: 1) A arma::cube, 
+#'   \code{permuted}, of the same dimensions as \code{phi} but 
+#'   with the labels permuted; 2) \code{perms} is a \code{S} times \code{K} 
+#'   matrix containing the permutations necessary to produce \code{permuted} 
+#'   from \code{phi} (i.e., the mapping from \code{phi} to \code{permuted})
+#' @details OpenMP is enabled if available. Due to overhead, the inner-most
+#'     loop is parallelized only if the number of latent classes/types
+#'     is larger than 3.
+relabel_true <- function(phi, phi_true, verbose = FALSE) {
+    .Call('_relabelKL_relabel_true', PACKAGE = 'relabelKL', phi, phi_true, verbose)
 }
 
 #' KL Divergence between two distributions
