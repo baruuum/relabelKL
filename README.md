@@ -1,8 +1,8 @@
- [![Travis build status](https://travis-ci.com/baruuum/relabelKL.svg?token=k7R3D8yhYkrGz6yc4eQf&branch=master)](https://travis-ci.com/baruuum/relabelKL)
+ [![Travis build status](https://travis-ci.com/baruuum/relabelKL.svg?token=k7R3D8yhYkrGz6yc4eQf&branch=master)](https://Travis-ci.com/baruuum/relabelKL)
 
 ## C++ implementation of the relabeling method proposed by Stephens(2000)
 
-While the relabeling algorithm proposed in Stephens (2000) has been shown to perform well in dealing with the label switching phenomenon in Bayesian finite mixture models, it has been pointed out that it is computationally expensive. Currently, the `label.switching::stephens` function implements Stepen's method. Yet, as it is written in `R`, it is rather slow, which makes it impractical to use on MCMC output of moderate size.
+While the relabeling algorithm proposed in Stephens (2000) has been shown to perform well in dealing with the label switching phenomenon in Bayesian finite mixture models, it has been pointed out that it is computationally expensive. Currently, the `label.switching::stephens` function implements Stephens' method. Yet, as it is written in `R`, it is rather slow, which makes it impractical to use on MCMC output of moderate size.
 
 The `relabelKL` package is simply a `C++` implementation of Stephen's relabeling algorithm. It is implemented using the [Armadillo library](http://arma.sourceforge.net/) and sourced via the `RcppArmadillo` package. If available, the relabeling algorithm will activate OpenMP to run
 parts of the code in parallel.
@@ -16,7 +16,7 @@ devtools::install_github(baruuum/relabelKL)
 library(relabelKL)
 ```
 
-Given `S`\*`N`\*`K` array of MCMC samples, call it `x`, where `N` is the number of units/individuals who belong to `K` latent classes/categories/extreme types, and where `S` is the number of posterior draws, calling the `relabelMCMC` function will relabel the output by Stephen's KL-algrorithm. There are only two options that can be specified: the numebr of maximum iterations to try (`maxit`) and whether intermediate results should be printed (`verbose`).
+Given `S`\*`N`\*`K` array of MCMC samples, call it `x`, where `N` is the number of units/individuals who belong to `K` latent classes/categories/extreme types, and where `S` is the number of posterior draws, calling the `relabelMCMC` function will relabel the output by Stephen's KL-algorithm. There are only two options that can be specified: the number of maximum iterations to try (`maxit`) and whether intermediate results should be printed (`verbose`).
 
 Running
 ``` r
@@ -35,6 +35,16 @@ y.relabeled = permuteMCMC(y, perms = res$perms, what = "cols")
 ```
 will permute the either the rows or the columns of each of the `S` sub-arrays of `y` according to `res$perms`. It is important to notice that the `permuteMCMC` function will assume that the last index of a three dimensional array represents the posterior draws, so that entering an array of dimensions, say,  `N`\*`B`\*`S` will lead to undefined behavior (assuming `S` stands for the draws). When a matrix is passed to the `permuteMCMC` function, it is assumed that it has dimensions `S`\*`K` and, thus, the function will always permute the columns. Lastly, sometimes we want to permute not only the rows or the columns but both simultaneously (which happens when the parameter of interest is a square matrix). If so, the `what = "both"` option can be used.
 
+## Relabeling when true assignment probabilities are known
+
+If the "true" labels of a stochastic blockmodel or latent class model are known in advance, assigning each individual to their true class is straightforward. Yet, there are situations in which we want to make the assignment probabilities of each posterior draw as close as possible to a set of fixed/true probabilities. These situations arise, for example, when bootstrapping finite mixture models or when we want to compare your posterior samples with elsewhere published results. Still other situations are those where we have calculated MAP or MLE estimates of the membership vectors or class assignments and want to use them as a pivots to relable the MCMC samples. In these cases, the `relabelTRUE` function might be used as follows:
+
+```r
+rel.true = relabelTRUE(x = x, x.true = x.true, verbose = T)
+```
+
+where `x.true` is a `N`\*`K` matrix of "true" assignment probabilities / mixed membership vectors. This function will try to relabel each posterior draw in `x` as close as possible to `x.true` in terms of KL-distances. 
+
 ## Functions to use with `rstan` objects
 
 The package comes with one dataset called `mmsbm`, which is a `stanfit` object obtained from running a mixed membership stochastic blockmodel on simulated data. The model has two parameters: `pi`, a matrix the mixed membership vectors, where each row indicates the probability of individual `i = 1,2,..,N`, belonging to type `k = 1, 2, ..., K`, and `theta` the so-called image matrix, which is of dimensions `K`\*`K` and reflects the association tendencies between the `K` pure types. 
@@ -47,14 +57,14 @@ The `relabelKL` package provides a wraper function to extract posterior samples 
 ```r
 pi.arr = extract_n_combine(mmsbm, par = "pi")
 ```
-will create an array with the first dimension equal to the number of post-warmup draws times the number of chains run, and the other dimensions are identical to the dimensions specified in the `Stan` progam. For example, if `gamma` was specified as a `matrix[L,M]` object, the two last dimensions of the extracted object will be `L` and `M`m This object, then, can be passed to `relabelMCMC` or `permuteMCMC`. For example,
+will create an array with the first dimension equal to the number of post-warmup draws times the number of chains run, and the other dimensions are identical to the dimensions specified in the `Stan` program. For example, if `gamma` was specified as a `matrix[L,M]` object, the two last dimensions of the extracted object will be `L` and `M`m This object, then, can be passed to `relabelMCMC` or `permuteMCMC`. For example,
 ```r
 rel = relabelMCMC(pi.arr, maxit = 50L, verbose = T)
 rel.pi.arr = rel$permuted
 theta.arr = extract_n_combine(mmsbm, par = "theta")
 rel.theta.arr = permuteMCMC(theta.arr, rel$perms, "both")
 ```
-can be used to relabel the posterior draws of both `pi` and `theta`. To monitor the convergence of the relabeled posterior draws, we have to transform the relabled arrays into a form that can be passed to the `rstan::monitor` function. This can be done by using the `to_stan_array` function:
+can be used to relabel the posterior draws of both `pi` and `theta`. To monitor the convergence of the relabeled posterior draws, we have to transform the relabeled arrays into a form that can be passed to the `rstan::monitor` function. This can be done by using the `to_stan_array` function:
 ```r
 rstan::monitor(to_stan_array(rel.pi.arr))
 rstan::monitor(to_stan_array(rel.theta.arr))
@@ -64,7 +74,7 @@ Similarly, traceplot might be inspected by using
 array_traceplot(to_stan_array(rel.pi.arr), par = "pi[1,2]")
 array_traceplot(to_stan_array(rel.theta.arr), par = "theta")
 ```
-The call will produce a `ggplot` object containing the traceplot of the single element `pi[1,2]` of the `pi` matrix; the secon call will produce a traceplot of all elements in the `theta` parameter.
+The call will produce a `ggplot` object containing the traceplot of the single element `pi[1,2]` of the `pi` matrix; the second call will produce a traceplot of all elements in the `theta` parameter.
 
 ## Comparison to `label.switching::stephens`
 
@@ -117,13 +127,13 @@ sum(res1$permutations != res2$perms)
 
     [1] 0
     
-Other tests that were run to ensure that the algorithm works correctly can be found in the `/tests` directory of this gitub repo.
+Other tests that were run to ensure that the algorithm works correctly can be found in the `/tests` directory of this github repo.
 
 
 ## Possible future extensions
 
 1. Right now, the algorithm uses a *brute force* approach by comparing all permutations between the labels to minimize the KL-divergence. If the number of classes/extreme types gets large, this approach might become inefficient since the number of comparisons grows at the order of `K!`. The problem of minimizing the KL-divergence can be, however, formulated as an integer assignment problem for which better algorithms exists. Incorporating these might produce gains in efficiency.
-2. Other relabeling algorithms might be rewritten in `C++` for faster implementation. The translation of algorithms contained in the `label.switching` package, for example, would be quite stratightforward.
+2. Other relabeling algorithms might be rewritten in `C++` for faster implementation. The translation of algorithms contained in the `label.switching` package, for example, would be quite straightforward.
 
 ## References
 
