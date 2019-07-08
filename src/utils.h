@@ -25,10 +25,10 @@ inline double kl_dist(
         const T & q)
 {
     if (p.n_elem != q.n_elem)
-        Rcpp::stop("size mismatch (kl_dist)!");
+        Rcpp::stop("size mismatch (kl_dist)");
 
-    if (arma::any(vectorise(p) <= 0.0) || arma::any(vectorise(q) <= 0.0))
-        Rcpp::stop("negative probabilities input vectors (kl_dist)");
+    if (arma::any(arma::vectorise(p) <= 0.0) || arma::any(arma::vectorise(q) <= 0.0))
+        Rcpp::stop("negative probabilities in input vectors (kl_dist)");
 
     double kl(0.0);
     for (arma::uword i = 0; i < p.n_elem; ++i) {
@@ -53,7 +53,7 @@ inline arma::umat gen_permute(
 
     // check argument
     if (N < 0)
-        Rcpp::stop("N has to be positive (gen_permute)");
+        Rcpp::stop("N has to be a positive integer (gen_permute)");
 
     // no. of possible permutations
     arma::uword K = R::gammafn(N + 1);
@@ -70,13 +70,7 @@ inline arma::umat gen_permute(
 
     while(std::next_permutation(seq.begin(), seq.end())) {
 
-        // note: std::next_permutation will generate the next
-        //       permutation in lexicographical order and return
-        //       "false" if the generated sequence is the first seq.
-
-        ++it;
-
-        pmat.row(it) = seq;
+        pmat.row(++it) = seq;
 
     }
 
@@ -97,13 +91,13 @@ inline arma::urowvec permute_urowvec(
 {
 
     if (order.min() != 0)
-        Rcpp::stop("order vector has to start from 0 (permute_vec)!");
+        Rcpp::stop("order vector has to start from 0 (permute_vec)");
 
 
     if (x.n_elem != order.n_elem)
-        Rcpp::stop("size mismatch (permute_vec)!");
+        Rcpp::stop("size mismatch (permute_vec)");
 
-    arma::urowvec res(size(x));
+    arma::urowvec res(arma::size(x));
 
     for (arma::uword k = 0; k < x.n_elem; ++k)
         res(k) = x(order(k));
@@ -128,14 +122,14 @@ inline T permute_mat(
 {
 
     if (order.min() != 0)
-        Rcpp::stop("order vector has to start from 0 (permute_mat)!");
+        Rcpp::stop("order vector has to start from 0 (permute_mat)");
 
     T res(x);
     
     if (dim == 0L) {
         
         if (x.n_cols != order.n_elem)
-            Rcpp::stop("dimension mismatch (permute_mat)!");
+            Rcpp::stop("dimension mismatch (permute_mat)");
         
         for (arma::uword i = 0; i < x.n_cols; ++i)
             res.col(i) = x.col(order(i));
@@ -145,7 +139,7 @@ inline T permute_mat(
     } 
         
     if (x.n_rows != order.n_elem)
-       Rcpp::stop("dimension mismatch (permute_mat)!");
+       Rcpp::stop("dimension mismatch (permute_mat)");
     
     for (arma::uword i = 0; i < x.n_rows; ++i) 
         res.row(i) =  x.row(order(i));
