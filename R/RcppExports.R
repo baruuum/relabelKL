@@ -51,6 +51,12 @@ relabel_true <- function(phi, phi_true, verbose = FALSE) {
     .Call('_relabelKL_relabel_true', PACKAGE = 'relabelKL', phi, phi_true, verbose)
 }
 
+#' Logarithm of sum of exponentials 
+#'
+#' @param x any object that allows iterators
+#' @return returns the log of the sum of exponentiated elements of \code{x}
+NULL
+
 #' KL Divergence between two distributions
 #'
 #' Calculates the KL-divergence of the target to the true distribution.
@@ -63,6 +69,16 @@ relabel_true <- function(phi, phi_true, verbose = FALSE) {
 #' @param p the "true" distribution
 #' @param q the "target" distribution
 #' @return Returns the KL-divergence of \code{q} from \code{p}
+NULL
+
+#' KL Divergence between two distributions (log-scale)
+#'
+#' Calculates the KL-divergence of the target to the true distribution, where 
+#' both distributions are entered on the logarithm scale.
+#'
+#' @param lp the "true" distribution on the log-scale
+#' @param lq the "target" distribution on the log-scale
+#' @return Returns the KL-divergence of \code{lq} from \code{lp}
 NULL
 
 #' Generate permutations

@@ -6,6 +6,31 @@
 
 using namespace Rcpp;
 
+//' Logarithm of sum of exponentials 
+//'
+//' @param x any object that allows iterators
+//' @return returns the log of the sum of exponentiated elements of \code{x}
+template <typename T>
+inline double log_sum_exp(
+        const T & x
+) {
+
+  double max_exp = x(0);
+  double esum(0.0);
+  
+  typename T::const_iterator i; 
+
+  for (i = x.begin() + 1 ; i != x.end() ; ++i)
+    if (*i > max_exp)
+      max_exp = *i;
+
+  for (i = x.begin(); i != x.end() ; ++i)
+    esum += std::exp(*i - max_exp);
+
+  return std::log(esum) + max_exp;
+
+};
+
 
 //' KL Divergence between two distributions
 //'
@@ -32,11 +57,34 @@ inline double kl_dist(
 
     double kl(0.0);
     for (arma::uword i = 0; i < p.n_elem; ++i) {
-        if (p(i) != 0)
             kl += p(i) * (std::log(p(i)) - std::log(q(i)));
     }
 
     return kl;
+
+};
+
+
+//' KL Divergence between two distributions (log-scale)
+//'
+//' Calculates the KL-divergence of the target to the true distribution, where 
+//' both distributions are entered on the logarithm scale.
+//'
+//' @param lp the "true" distribution on the log-scale
+//' @param lq the "target" distribution on the log-scale
+//' @return Returns the KL-divergence of \code{lq} from \code{lp}
+template <typename T>
+inline double kl_dist_log(
+        const T & lp,
+        const T & lq)
+{
+    if (lp.n_elem != lq.n_elem)
+        Rcpp::stop("size mismatch (kl_dist_log)");
+
+    if (lp.has_inf() || lq.has_inf())
+        Rcpp::stop("non-finite in input vectors (kl_dist_log)");
+
+    return arma::accu(arma::exp(lp) % (lp - lq));
 
 };
 
