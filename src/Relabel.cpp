@@ -57,7 +57,7 @@ Rcpp::List relabel_kl(const arma::cube & phi,
     perm_hist.each_row() = perms.row(0L);
         
     // post.mean phi 
-    arma::mat Q_hat = mean(phi, 2L);
+    arma::mat Q_hat = arma::mean(phi, 2L);
     
     // initial avg. KL-dist to post.mean
     arma::uword s;
@@ -76,7 +76,7 @@ Rcpp::List relabel_kl(const arma::cube & phi,
 
 #endif 
     
-    meankl = meankl / S;
+    meankl /= S;
     
     if (verbose) 
         Rcpp::Rcout << "\nStarting Fixed-Point Iterations ... \n" << std::endl;
@@ -166,7 +166,7 @@ Rcpp::List relabel_kl(const arma::cube & phi,
 
 #endif
 
-        meankl_new = meankl_new / S;
+        meankl_new /= S;
         
         // if there is no change, return
         if (meankl_new == meankl) {
@@ -199,7 +199,6 @@ Rcpp::List relabel_kl(const arma::cube & phi,
                 Named("iterations") = maxit);
 
 }
-
 
 
 //' Relabel membership vector by minimizing KL-algorithm to true labels
@@ -265,7 +264,7 @@ Rcpp::List relabel_true(
 
 #endif
     
-        meankl = meankl / S;
+        meankl /= S;
     
         Rcpp::Rcout <<
             std::setprecision(3) <<
@@ -337,7 +336,7 @@ Rcpp::List relabel_true(
 
 #endif
 
-        meankl_new = meankl_new / S;
+        meankl_new /= S;
             
             Rcpp::Rcout << 
                 std::setprecision(3) <<

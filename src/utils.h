@@ -3,6 +3,7 @@
 
 #include <RcppArmadillo.h>
 //[[Rcpp::depends(RcppArmadillo)]]
+//[[Rcpp::plugins(cpp11)]]
 
 using namespace Rcpp;
 
@@ -14,7 +15,7 @@ template <typename T>
 inline double log_sum_exp(
         const T & x
 ) {
-
+  
   double max_exp = x(0);
   double esum(0.0);
   
@@ -70,8 +71,8 @@ inline double kl_dist(
 //' Calculates the KL-divergence of the target to the true distribution, where 
 //' both distributions are entered on the logarithm scale.
 //'
-//' @param lp the "true" distribution on the log-scale
-//' @param lq the "target" distribution on the log-scale
+//' @param lp the "true" distribution on the log-scale (has to be an arma object)
+//' @param lq the "target" distribution on the log-scale (has to be an arma object)
 //' @return Returns the KL-divergence of \code{lq} from \code{lp}
 template <typename T>
 inline double kl_dist_log(
@@ -83,8 +84,15 @@ inline double kl_dist_log(
 
     if (lp.has_inf() || lq.has_inf())
         Rcpp::stop("non-finite in input vectors (kl_dist_log)");
-
-    return arma::accu(arma::exp(lp) % (lp - lq));
+    
+    return arma::accu((arma::expm1(lp) + 1.0) % (lp - lq));
+    
+    // double kl(0.0);
+    // for (arma::uword i = 0; i < lp.n_elem; ++i) {
+    //         kl += std::exp(lp(i)) * (lp(i) - lq(i));
+    // }
+    // 
+    // return kl;
 
 };
 

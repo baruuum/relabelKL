@@ -51,6 +51,55 @@ relabel_true <- function(phi, phi_true, verbose = FALSE) {
     .Call('_relabelKL_relabel_true', PACKAGE = 'relabelKL', phi, phi_true, verbose)
 }
 
+#' Log of the sum of exponential
+#' 
+#' @param x a vector
+#' @return log of the sum of exponentiated elements in \code{x}
+lse <- function(x) {
+    .Call('_relabelKL_lse', PACKAGE = 'relabelKL', x)
+}
+
+#' Relabel membership vector by minimizing KL-algorithm (log-scale)
+#' 
+#' Relabels the membership vectors of a mixed membership model or 
+#' mixed membership stochastic blockmodel, using the KL-algorithm
+#' proposed by Stephens (2000).
+#' 
+#' @param lphi cube of length \code{S}, each element of which is a 
+#'     matrix of dimension N times K, where N is the number of individuals 
+#'     and K is the number of extreme types (or classes).
+#' @param maxit the number of maximum iterations to run, defaults to 100.
+#' @param verbose if TRUE, number of iterations and corresponding KL-distance 
+#'     values are printed. 
+#' @return The function returns a Rcpp::List of three elements. 
+#'     1) A cube, \code{permuted}, of the same dimensions as \code{phi} but 
+#'     with the labels permuted; 2) \code{perms} is a \code{S} times \code{K} 
+#'     matrix containing the permutations necessary to produce \code{permuted} 
+#'     from \code{phi} (i.e., the mapping from \code{phi} to \code{permuted});
+#'     and 3) the number of iterations run.
+#' @details OpenMP is enabled if available. Due to overhead, the inner-most
+#'     loop is parallelized only if the number of latent classes/types
+#'     is larger than 3.
+relabel_kl_log <- function(lphi, maxit = 100L, verbose = TRUE) {
+    .Call('_relabelKL_relabel_kl_log', PACKAGE = 'relabelKL', lphi, maxit, verbose)
+}
+
+kl1 <- function(v1, v2) {
+    .Call('_relabelKL_kl1', PACKAGE = 'relabelKL', v1, v2)
+}
+
+kl2 <- function(v1, v2) {
+    .Call('_relabelKL_kl2', PACKAGE = 'relabelKL', v1, v2)
+}
+
+lsumcube <- function(res) {
+    .Call('_relabelKL_lsumcube', PACKAGE = 'relabelKL', res)
+}
+
+sumcube <- function(res) {
+    .Call('_relabelKL_sumcube', PACKAGE = 'relabelKL', res)
+}
+
 #' Logarithm of sum of exponentials 
 #'
 #' @param x any object that allows iterators
@@ -76,8 +125,8 @@ NULL
 #' Calculates the KL-divergence of the target to the true distribution, where 
 #' both distributions are entered on the logarithm scale.
 #'
-#' @param lp the "true" distribution on the log-scale
-#' @param lq the "target" distribution on the log-scale
+#' @param lp the "true" distribution on the log-scale (has to be an arma object)
+#' @param lq the "target" distribution on the log-scale (has to be an arma object)
 #' @return Returns the KL-divergence of \code{lq} from \code{lp}
 NULL
 
