@@ -30,7 +30,7 @@ res = relabelMCMC(x)
 ```
 returns a `list` of four elements: 
 
-1.`permuted`: the same object as `x` but with the columns of each posterior draw relabeled
+1. `permuted`: the same object as `x` but with the columns of each posterior draw relabeled
 2. `perms`: a `S \times K` matrix which contains, for each draw, the optimal permutation. That is, the `s`th row of `perms` shows how the `s`th posterior draw was permuted, so that applying the permutation in `perms` to the initial array, `x`, will result in the relabeled array
 3. `iterations`: the number of iterations for which the algorithm was run
 4. `status`: which is `0` if the algorithm has successfully converged and `1` otherwise
