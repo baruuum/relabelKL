@@ -7,7 +7,7 @@ Authors@R: person("Barum", "Park", email = "baruuum@gmail.com",
                   role = c("aut", "cre"))
 Description: Relabeling algorithm proposed by Stephens (2000) to 
     post-process MCMC output of finite mixture models.
-License: MIT + file LICENSE
+License: GPL (>= 3.0) + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5.0)

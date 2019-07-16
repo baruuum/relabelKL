@@ -4,7 +4,7 @@
 \alias{relabelMCMC}
 \title{Relabel MCMC output by KL-algorithm}
 \usage{
-relabelMCMC(x, maxit = 100, verbose = TRUE)
+relabelMCMC(x, maxit = 100, verbose = TRUE, log.p = TRUE)
 }
 \arguments{
 \item{x}{an \code{S}\*\code{N}\*\code{K} array of MCMC samples containing
@@ -15,6 +15,8 @@ latent classes, and \code{S} the number of posterior samples}
 \item{maxit}{number of maximum iterations to use in the algorithm}
 
 \item{verbose}{if true, prints the intermediate results}
+
+\item{log.p}{if TRUE, treats elements in x as log-probabilities.}
 }
 \value{
 Returns a list of four elements: \code{permuted}, the relabeled

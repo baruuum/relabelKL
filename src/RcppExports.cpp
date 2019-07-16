@@ -32,10 +32,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// lse
+double lse(const NumericVector& x);
+RcppExport SEXP _relabelKL_lse(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(lse(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// relabel_kl_log
+Rcpp::List relabel_kl_log(const arma::cube& lphi, arma::uword maxit, bool verbose);
+RcppExport SEXP _relabelKL_relabel_kl_log(SEXP lphiSEXP, SEXP maxitSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cube& >::type lphi(lphiSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type maxit(maxitSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(relabel_kl_log(lphi, maxit, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_relabelKL_relabel_kl", (DL_FUNC) &_relabelKL_relabel_kl, 3},
     {"_relabelKL_relabel_true", (DL_FUNC) &_relabelKL_relabel_true, 3},
+    {"_relabelKL_lse", (DL_FUNC) &_relabelKL_lse, 1},
+    {"_relabelKL_relabel_kl_log", (DL_FUNC) &_relabelKL_relabel_kl_log, 3},
     {NULL, NULL, 0}
 };
 
