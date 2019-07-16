@@ -26,7 +26,7 @@ Three options might be specified:
 
 Calling `relabelMCMC` on the array `x`
 ``` r
-res = relabelMCMC(x, maxit = 100, verbose = T)
+res = relabelMCMC(x)
 ```
 returns a `list` of four elements: 
 
@@ -53,7 +53,7 @@ will permute the either the rows, columns, or both the rows and columns of each 
 If the "true" labels of a stochastic blockmodel or latent class model are known in advance, assigning each individual to their true class is straightforward. Yet, there are situations in which we want to make the assignment probabilities of each posterior draw as close as possible to a set of known/true probabilities. These situations arise, for example, when MAP or MLE estimates of the membership vectors of mixed membership models are calculated and when we want to use them as a pivots to relable the MCMC samples. In these cases, the `relabelTRUE` function might be used as follows:
 
 ```r
-rel.true = relabelTRUE(x = x, x.true = x.true, verbose = T)
+rel.true = relabelTRUE(x = x, x.true = x.true)
 ```
 
 where `x.true` is a `N`\*`K` matrix of "true" assignment probabilities / mixed membership vectors. This function will try to relabel each posterior draw in `x` as close as possible to `x.true` in terms of KL-distances. 
