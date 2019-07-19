@@ -162,6 +162,7 @@ test_that("relabelTRUE throws appropriate errors", {
     test.ar = simplify2array(
                 lapply(1:S, function(w) rdirichlet(N, pvec))
               )
+    
     # sample true prob mat
     true = rdirichlet(N, pvec)
     
@@ -175,9 +176,15 @@ test_that("relabelTRUE throws appropriate errors", {
       relabelTRUE(log(aperm(test.ar, c(3,1,2))), log(t(true)), F, T)
     )
     
+    # randomly relabel some of the draws
+    test.ar = aperm(test.ar, c(3,1,2))
+    rel.draws = sample.int(S, floor(S/4), replace = F)
+    for (s in rel.draws) 
+        test.ar[s, , ] = test.ar[s, , sample.int(K, K, F)]
+
     
     # relabel
-    res1 = relabelTRUE(aperm(test.ar, c(3,1,2)), true, F, F)
+    res1 = relabelTRUE(test.ar, true, F, F)
     
     # relabel a second time
     test.ar2 = res1$permuted
@@ -191,7 +198,7 @@ test_that("relabelTRUE throws appropriate errors", {
     expect_equal(res2$perms, matrix(rep(1:K, S), nr = S, byrow = T))
     
     # relabel log
-    res.log = relabelTRUE(log(aperm(test.ar, c(3,1,2))), log(true), F, T) 
+    res.log = relabelTRUE(log(test.ar), log(true), F, T) 
     
     # compare prob with log-prob results
     expect_false(isTRUE(all.equal(res1$permuted, res.log$permuted)))
