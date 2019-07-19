@@ -53,10 +53,10 @@ will permute the either the rows, columns, or both the rows and columns of each 
 If the "true" labels of a stochastic blockmodel or latent class model are known in advance, assigning each individual to their true class is straightforward. Yet, there are situations in which we want to make the assignment probabilities of each posterior draw as close as possible to a set of known/true probabilities. These situations arise, for example, when MAP or MLE estimates of the membership vectors of mixed membership models are calculated and when we want to use them as a pivots to relable the MCMC samples. In these cases, the `relabelTRUE` function might be used as follows:
 
 ```r
-rel.true = relabelTRUE(x = x, x.true = x.true)
+rel.true = relabelTRUE(x = x, x.true = x.true, verbose = F, log.p = F)
 ```
 
-where `x.true` is a `N`\*`K` matrix of "true" assignment probabilities / mixed membership vectors. This function will try to relabel each posterior draw in `x` as close as possible to `x.true` in terms of KL-distances. 
+where `x.true` is a `N`\*`K` matrix of "true" assignment probabilities / mixed membership vectors. This function will try to relabel each posterior draw in `x` as close as possible to `x.true` in terms of KL-distances. When the `log.p` option is set to `TRUE`, *both* `x` and `x.true` should be entered on the log-scale. Otherwise, the function will throw an error.
 
 ## Functions to use with `rstan` objects
 
