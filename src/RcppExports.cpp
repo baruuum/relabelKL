@@ -56,12 +56,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// relabel_true_log
+Rcpp::List relabel_true_log(const arma::cube& lphi, const arma::mat& lphi_true, bool verbose);
+RcppExport SEXP _relabelKL_relabel_true_log(SEXP lphiSEXP, SEXP lphi_trueSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cube& >::type lphi(lphiSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type lphi_true(lphi_trueSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(relabel_true_log(lphi, lphi_true, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_relabelKL_relabel_kl", (DL_FUNC) &_relabelKL_relabel_kl, 3},
     {"_relabelKL_relabel_true", (DL_FUNC) &_relabelKL_relabel_true, 3},
     {"_relabelKL_lse", (DL_FUNC) &_relabelKL_lse, 1},
     {"_relabelKL_relabel_kl_log", (DL_FUNC) &_relabelKL_relabel_kl_log, 3},
+    {"_relabelKL_relabel_true_log", (DL_FUNC) &_relabelKL_relabel_true_log, 3},
     {NULL, NULL, 0}
 };
 

@@ -84,20 +84,31 @@ relabel_kl_log <- function(lphi, maxit = 100L, verbose = TRUE) {
     .Call('_relabelKL_relabel_kl_log', PACKAGE = 'relabelKL', lphi, maxit, verbose)
 }
 
-kl1 <- function(v1, v2) {
-    .Call('_relabelKL_kl1', PACKAGE = 'relabelKL', v1, v2)
-}
-
-kl2 <- function(v1, v2) {
-    .Call('_relabelKL_kl2', PACKAGE = 'relabelKL', v1, v2)
-}
-
-lsumcube <- function(res) {
-    .Call('_relabelKL_lsumcube', PACKAGE = 'relabelKL', res)
-}
-
-sumcube <- function(res) {
-    .Call('_relabelKL_sumcube', PACKAGE = 'relabelKL', res)
+#' Relabel membership vector by minimizing KL-algorithm to true labels
+#' 
+#' Relabels the membership vectors of a mixed membership model or 
+#' mixed membership stochastic blockmodel, by minimizing the KL-divergence
+#' to a priori known true labels, where probabilities are entered on the
+#' log-scale.
+#' 
+#' @param lphi cube of length \code{S}, each slice of which is a matrix of 
+#'   dimension \code{N} times \code{K}, and where \code{N} is the number of 
+#'   individuals and K is the number of extreme types (or classes). 
+#'   Elements of \code{lphi} should be log-probabilities.
+#' @param lphi_true a \code{N} times \code{K} matrix containing the "true"
+#'   values of latent-class/mixed-membership probabilities on the log-scale
+#' @param verbose if true, KL-divergence from true labels is calculated
+#'   and printed before and after relabeling
+#' @return Returns a Rcpp::List with two elements: 1) A arma::cube, 
+#'   \code{permuted}, of the same dimensions as \code{phi} but 
+#'   with the labels permuted; 2) \code{perms} is a \code{S} times \code{K} 
+#'   matrix containing the permutations necessary to produce \code{permuted} 
+#'   from \code{phi} (i.e., the mapping from \code{phi} to \code{permuted})
+#' @details OpenMP is enabled if available. Due to overhead, the inner-most
+#'     loop is parallelized only if the number of latent classes/types
+#'     is larger than 3.
+relabel_true_log <- function(lphi, lphi_true, verbose = FALSE) {
+    .Call('_relabelKL_relabel_true_log', PACKAGE = 'relabelKL', lphi, lphi_true, verbose)
 }
 
 #' Logarithm of sum of exponentials 

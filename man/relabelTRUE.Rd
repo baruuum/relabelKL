@@ -5,7 +5,7 @@
 \title{Relabel MCMC output by minimizing KL-divergence to true assignment 
 probabilities}
 \usage{
-relabelTRUE(x, x.true, verbose = FALSE)
+relabelTRUE(x, x.true, verbose = TRUE, log.p = TRUE)
 }
 \arguments{
 \item{x}{an \code{S}\*\code{N}\*\code{K} array of MCMC samples containing
@@ -18,6 +18,8 @@ true assignment/mixed-membership probabilities}
 
 \item{verbose}{if true, prints KL-divergence to true probabilities before
 and after relabeling}
+
+\item{log.p}{if TRUE, treats elements in x as log-probabilities}
 }
 \value{
 Returns a list of two elements: \code{permuted}, the relabeled

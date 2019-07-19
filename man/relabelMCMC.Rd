@@ -16,7 +16,7 @@ latent classes, and \code{S} the number of posterior samples}
 
 \item{verbose}{if true, prints the intermediate results}
 
-\item{log.p}{if TRUE, treats elements in x as log-probabilities.}
+\item{log.p}{if TRUE, treats elements in x as log-probabilities}
 }
 \value{
 Returns a list of four elements: \code{permuted}, the relabeled

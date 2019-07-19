@@ -165,19 +165,39 @@ test_that("relabelTRUE throws appropriate errors", {
     # sample true prob mat
     true = rdirichlet(N, pvec)
     
-    expect_error(relabelTRUE(test.ar, true, verbose = F))
-    expect_error(relabelTRUE(aperm(test.ar, c(3,1,2)), t(true), F))
+    # throw error if probs don't sum to one
+    expect_error(relabelTRUE(test.ar, true, verbose = F, log.p = F))
+    expect_error(relabelTRUE(aperm(test.ar, c(3,1,2)), t(true), F, F))
+    
+    # same test for log-probs
+    expect_error(relabelTRUE(log(test.ar), log(true), F, T))
+    expect_error(
+      relabelTRUE(log(aperm(test.ar, c(3,1,2))), log(t(true)), F, T)
+    )
+    
     
     # relabel
-    res1 = relabelTRUE(aperm(test.ar, c(3,1,2)), true, FALSE)
+    res1 = relabelTRUE(aperm(test.ar, c(3,1,2)), true, F, F)
     
     # relabel a second time
     test.ar2 = res1$permuted
-    res2 = relabelTRUE(test.ar2, true, FALSE)
+    res2 = relabelTRUE(test.ar2, true, F, F)
 
-    expect_true(all.equal(res1$permuted, res2$permuted))
+    # first and second relabeling should be equal
+    expect_equal(res1$permuted, res2$permuted)
+    # but permutations should be different
     expect_false(isTRUE(all.equal(res1$perms, res2$perms)))
-    expect_true(all.equal(res2$perms, matrix(rep(1:K, S), nr = S, byrow = T)))
+    # and perms for second permutation should be unchanged
+    expect_equal(res2$perms, matrix(rep(1:K, S), nr = S, byrow = T))
+    
+    # relabel log
+    res.log = relabelTRUE(log(aperm(test.ar, c(3,1,2))), log(true), F, T) 
+    
+    # compare prob with log-prob results
+    expect_false(isTRUE(all.equal(res1$permuted, res.log$permuted)))
+    expect_equal(res1$permuted, exp(res.log$permuted))
+    # compare perms
+    expect_equal(res1$perms, res.log$perms)
 
 })
 

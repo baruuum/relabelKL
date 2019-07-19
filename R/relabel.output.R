@@ -8,7 +8,7 @@
 #'   latent classes, and \code{S} the number of posterior samples
 #' @param maxit number of maximum iterations to use in the algorithm
 #' @param verbose if true, prints the intermediate results
-#' @param log.p if TRUE, treats elements in x as log-probabilities.
+#' @param log.p if TRUE, treats elements in x as log-probabilities
 #' @return Returns a list of four elements: \code{permuted}, the relabeled
 #'   array; \code{perms} the permutation pattern used for each sample;
 #'   \code{iterations} the number of iterations that were needed to permute
@@ -108,10 +108,11 @@ relabelMCMC = function(
 #'   true assignment/mixed-membership probabilities
 #' @param verbose if true, prints KL-divergence to true probabilities before
 #'   and after relabeling
+#' @param log.p if TRUE, treats elements in x as log-probabilities
 #' @return Returns a list of two elements: \code{permuted}, the relabeled
 #'   array and, \code{perms}, the permutation pattern used for each sample
 #' @export
-relabelTRUE = function(x, x.true, verbose = FALSE) {
+relabelTRUE = function(x, x.true, verbose = TRUE, log.p = TRUE) {
     
     if (!is.array(x))
         stop("x has to be an array")
@@ -119,36 +120,74 @@ relabelTRUE = function(x, x.true, verbose = FALSE) {
     if (length(dim(x)) != 3L)
         stop("x has to be a three-dimensional array")
     
-    if (sum(x < 0 | x > 1) > 0)
-        stop("all elements in x have to lie between zero and one")
-    
-    if (sum(x.true < 0 | x.true > 1) > 0)
-        stop("all elements in x.true have to lie between zero and one")
-    
-    if (
-        !isTRUE(
-            all.equal(
-                apply(x, 1, rowSums), 
-                matrix(1.0, nrow = dim(x)[1], ncol = dim(x)[2]),
-                check.attributes = FALSE
+    if (log.p) {
+        
+        if (sum(is.infinite(x) | x > 0.0) > 0)
+            stop("log-probabilities in x have to be finite and less than zero")
+        if (sum(is.infinite(x.true) | x.true > 0.0) > 0)
+            stop("log-probabilities in x.true have to be finite and less than zero")
+
+        
+        if (
+            !isTRUE(
+                all.equal(
+                    apply(x, 1L, function(w) apply(w, 1L, lse)), 
+                    matrix(0.0, nrow = dim(x)[1L], ncol = dim(x)[2L]),
+                    check.attributes = FALSE
+                )
             )
         )
-    )
-        stop("rows in x do not sum to one")
-    
-    if (
-        !isTRUE(
-            all.equal(
-                rowSums(x.true),
-                rep(1.0, nrow(x.true)),
-                check.attributes = F
+            stop("probabilities in the rows of x don't sum to one")
+        
+        if (
+            !isTRUE(
+                all.equal(
+                    apply(x.true, 1L, lse),
+                    rep(0.0, nrow(x.true)),
+                    check.attributes = F
+                )
             )
         )
-    )
-        stop("rows in x.true do not sum to one")
+            stop("rows in x.true do not sum to one")
+        
+        # relabel
+        res = relabel_true_log(aperm(x, c(2, 3, 1)), x.true, verbose)
+        
+    } else {
+        
+        if (sum(x < 0 | x > 1) > 0)
+            stop("all elements in x have to lie between zero and one")
+        
+        if (sum(x.true < 0 | x.true > 1) > 0)
+            stop("all elements in x.true have to lie between zero and one")
+        
+        if (
+            !isTRUE(
+                all.equal(
+                    apply(x, 1, rowSums), 
+                    matrix(1.0, nrow = dim(x)[1], ncol = dim(x)[2]),
+                    check.attributes = FALSE
+                )
+            )
+        )
+            stop("rows in x do not sum to one")
+        
+        if (
+            !isTRUE(
+                all.equal(
+                    rowSums(x.true),
+                    rep(1.0, nrow(x.true)),
+                    check.attributes = F
+                )
+            )
+        )
+            stop("rows in x.true do not sum to one")
+        
+        # relabel
+        res = relabel_true(aperm(x, c(2, 3, 1)), x.true, verbose)
     
-    # relabel
-    res = relabel_true(aperm(x, c(2, 3, 1)), x.true, verbose)
+    }
+        
     # change indexing of permutations to start from one
     res$perms = res$perms + 1L 
     # change ordering of dimensions 
