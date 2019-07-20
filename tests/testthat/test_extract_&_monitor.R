@@ -6,6 +6,8 @@ test_that("extract and back-transformation works", {
     skip_on_cran()
     skip_on_travis()
     
+    library(rstan)
+    
     data("mmsbm")
     
     stan.pi = extract_n_combine(mmsbm, "pi")
@@ -35,7 +37,7 @@ test_that("extract and back-transformation works", {
     array_traceplot(arr.theta, 'theta')
     array_traceplot(arr.theta, 'theta[1,1]')
     
-    rel = relabelMCMC(stan.pi, 50, TRUE)
+    rel = relabelMCMC(stan.pi, 50, TRUE, FALSE)
     re.theta = permuteMCMC(stan.theta, rel$perms, "both")
     array_traceplot(to_stan_array(re.theta), "theta")
     
