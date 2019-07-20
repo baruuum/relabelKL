@@ -126,12 +126,11 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
                 std::endl;
         }
         
-        arma::colvec kl_q(n_perms);
-        
         for (arma::uword s = 0; s < S; ++s) {
             
             arma::mat lP_hat = res.slice(s);
-            
+            arma::colvec kl_q(n_perms);
+        
             // calc permutation that minimizes KL-dist to p
 
 #ifndef _OPENMP
@@ -148,7 +147,7 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
                 #pragma omp parallel for
                 for (arma::uword n = 0; n < n_perms; ++n) {
 
-                        kl_q(n) = kl_dist_log(permute_mat(lP_hat, perms.row(n).t(), 0L), lQ_hat);
+                    kl_q(n) = kl_dist_log(permute_mat(lP_hat, perms.row(n).t(), 0L), lQ_hat);
 
                 }
 
@@ -206,7 +205,7 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
 
         lQ_hat_new -= std::log(S);
 
-        #pragma omp parallel for reduction(+: meankl)
+        #pragma omp parallel for reduction(+: meankl_new)
         for (arma::uword s = 0; s < S; ++s) {
 
             meankl_new += kl_dist_log(res.slice(s), lQ_hat);
@@ -248,7 +247,6 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
                 Named("iterations") = maxit);
 
 }
-
 
 //' Relabel membership vector by minimizing KL-algorithm to true labels
 //' 
@@ -403,5 +401,3 @@ Rcpp::List relabel_true_log(
         Named("perms") = perm_hist);
 
 }
-
-

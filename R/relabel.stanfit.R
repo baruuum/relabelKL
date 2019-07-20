@@ -80,7 +80,15 @@ to_stan_array = function(x) {
         ix.e = ix.s + org.dims[1] - 1L
 
         # reassign relabled pars
-        tmp.arr = apply(x[ix.s:ix.e, , ], 1L, c)
+        if (length(dim(x)) == 2L) {
+            
+            tmp.arr = apply(x[ix.s:ix.e, ], 1L, c)
+            
+        } else {
+        
+            tmp.arr = apply(x[ix.s:ix.e, , ], 1L, c)
+            
+        }
 
         if (nrow(tmp.arr) != org.dims[3])
             stop("dimension mismatch")
