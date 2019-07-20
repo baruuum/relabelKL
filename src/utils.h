@@ -83,7 +83,7 @@ inline double kl_dist_log(
         Rcpp::stop("size mismatch (kl_dist_log)");
 
     if (lp.has_inf() || lq.has_inf())
-        Rcpp::stop("non-finite in input vectors (kl_dist_log)");
+        Rcpp::stop("non-finite elements in input (kl_dist_log)");
     
     return arma::accu((arma::expm1(lp) + 1.0) % (lp - lq));
     

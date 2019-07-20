@@ -5,8 +5,8 @@ has.ls = requireNamespace("label.switching", quietly = T)
 # function to draw from dirichlet distribution
 rdirichlet = function(N, alpha, log.p = F) {
     
-    l <- length(alpha)
-    x <- matrix(rgamma(l * N, alpha), ncol = l, byrow = T)
+    l = length(alpha)
+    x = matrix(rgamma(l * N, alpha), ncol = l, byrow = T)
     if (log.p) {
       log(x) - log(as.vector(x %*% rep(1, l)))
     } else {
@@ -120,7 +120,6 @@ test_that("relabeled array matches permutations", {
     
 })
 
-
 test_that("2nd relabeling results in identity mapping", {
     
     # params
@@ -207,7 +206,6 @@ test_that("relabelTRUE throws appropriate errors", {
     expect_equal(res1$perms, res.log$perms)
 
 })
-
 
 test_that("relabling based on log-probs gives same results", {
     

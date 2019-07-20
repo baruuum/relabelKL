@@ -202,8 +202,6 @@ relabelTRUE = function(x, x.true, verbose = TRUE, log.p = TRUE) {
 
 }
 
-
-
 #' Relabel MCMC output based on Permutation Matrix
 #' 
 #' Relabel MCMC output from finite mixture models using the permutations 

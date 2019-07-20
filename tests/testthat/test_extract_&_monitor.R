@@ -1,12 +1,9 @@
 context("Permuting and monitoring stanfit objects")
 
-
 test_that("extract and back-transformation works", {
     
     skip_on_cran()
     skip_on_travis()
-    
-    library(rstan)
     
     data("mmsbm")
     

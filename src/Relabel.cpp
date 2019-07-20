@@ -200,7 +200,6 @@ Rcpp::List relabel_kl(const arma::cube & phi,
 
 }
 
-
 //' Relabel membership vector by minimizing KL-algorithm to true labels
 //' 
 //' Relabels the membership vectors of a mixed membership model or 
@@ -352,5 +351,3 @@ Rcpp::List relabel_true(
         Named("perms") = perm_hist);
 
 }
-
-
