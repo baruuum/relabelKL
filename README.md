@@ -134,7 +134,7 @@ Next, we use the `relabelMCMC` function:
 ```r
 # fit relabelKL::relabelMCMC
 start_t = Sys.time()
-res2 = relabelKL::relabelMCMC(x, maxit = 100L, verbose = FALSE)
+res2 = relabelKL::relabelMCMC(x, maxit = 100L, verbose = FALSE, log.p = FALSE)
 end_t = Sys.time()
 print(end_t - start_t)
 ```
