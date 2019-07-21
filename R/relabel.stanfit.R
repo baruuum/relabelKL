@@ -56,7 +56,7 @@ extract_n_combine = function(fit, par) {
 #' @export
 to_stan_array = function(x) {
     
-    if (!is.array(x))
+        if (!is.array(x))
         stop("x has to be an array")
     
     att.names = names(attributes(x))
@@ -84,9 +84,17 @@ to_stan_array = function(x) {
             
             tmp.arr = apply(x[ix.s:ix.e, ], 1L, c)
             
-        } else {
+        } else if (length(dim(x)) == 3L) {
         
             tmp.arr = apply(x[ix.s:ix.e, , ], 1L, c)
+            
+        } else if (length(dim(x)) == 4L) {
+            
+            tmp.arr = apply(x[ix.s:ix.e, , ,], 1L, c)
+            
+        } else {
+            
+            stop("to_stan_array is currently not able to deal with arrays with more than 4 dimensions")
             
         }
 

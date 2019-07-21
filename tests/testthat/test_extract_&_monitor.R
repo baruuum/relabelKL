@@ -2,33 +2,21 @@ context("Permuting and monitoring stanfit objects")
 
 test_that("extract and back-transformation works", {
     
+    data("mmsbm")
+    
+    # check whether extract_n_combine -> to_stan_array returns original array
+    stan.pi = extract_n_combine(mmsbm, "pi")
+    ext.pi = rstan:::extract(mmsbm, par ="pi", permute = F)
+    expect_true(identical(ext.pi, to_stan_array(stan.pi)))
+    
+    stan.theta = extract_n_combine(mmsbm, "theta")
+    ext.theta = rstan:::extract(mmsbm, par = "theta", permute = F)
+    expect_true(identical(ext.theta, to_stan_array(stan.theta)))
+    
     skip_on_cran()
     skip_on_travis()
     
-    data("mmsbm")
-    
-    stan.pi = extract_n_combine(mmsbm, "pi")
-
-    expect_true(
-        isTRUE(
-            all.equal(
-                to_stan_array(stan.pi),
-                rstan:::extract(mmsbm, par = 'pi', permute = F, inc_warmup = F)
-            )
-        )
-    )
-    
-    stan.theta = extract_n_combine(mmsbm, "theta")
     arr.theta = to_stan_array(stan.theta)
-    
-    expect_true(
-        isTRUE(
-            all.equal(
-                arr.theta,
-                rstan:::extract(mmsbm, par = 'theta', permute = F, inc_warmup = F)
-            )
-        )
-    )
     
     skip("skip producing plots")
     array_traceplot(arr.theta, 'theta')
