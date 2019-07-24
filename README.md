@@ -12,7 +12,7 @@ parts of the code in parallel.
 Using the `devtools` package, `relabelKL` can be directly installed from github:
 
 ``` r
-devtools::install_github(baruuum/relabelKL)
+devtools::install_github("baruuum/relabelKL")
 library(relabelKL)
 ```
 
@@ -76,7 +76,7 @@ will combine post-warmup draws across all MCMC chains into the first dimension o
 
 Thus, by running
 ```r
-rel = relabelMCMC(pi.arr, maxit = 50L, verbose = T)
+rel = relabelMCMC(pi.arr, maxit = 50L, verbose = T, log.p = F)
 rel.pi.arr = rel$permuted
 ```
 `rel.pi.arr` will contain the relabled `pi` array and by running
