@@ -120,6 +120,9 @@ relabelTRUE = function(x, x.true, verbose = TRUE, log.p = TRUE) {
     if (length(dim(x)) != 3L)
         stop("x has to be a three-dimensional array")
     
+    if (!all(dim(x)[2:3] == dim(x.true)))
+        stop("dimension mismatch between x and x.true")
+    
     if (log.p) {
         
         if (sum(is.infinite(x) | x > 0.0) > 0)
