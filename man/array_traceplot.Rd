@@ -9,7 +9,13 @@ array_traceplot(x, par)
 \arguments{
 \item{x}{an array created by calling \code{extract_n_combine}}
 
-\item{par}{name of the parameter to plot}
+\item{par}{name of the parameter(s) to plot entered as a sting. 
+This has to be either 
+\itemize{
+  \item the name of a single parameter, e.g., \code{"theta[1,2]"}
+  \item the name of an matrix/array/vector, e.g., \code{"theta"}
+  \item or a vector of single parameters, e.g., \code{c("theta[1,1]", "theta[1,2]")}
+}}
 }
 \value{
 the function returns a \code{ggplot} object of the traceplot

@@ -19,12 +19,15 @@ test_that("extract and back-transformation works", {
     arr.theta = to_stan_array(stan.theta)
     
     skip("skip producing plots")
-    array_traceplot(arr.theta, 'theta')
-    array_traceplot(arr.theta, 'theta[1,1]')
+    array_traceplot(arr.theta, "theta")
+    array_traceplot(arr.theta, "theta[1,1]")
+    array_traceplot(arr.theta, c("theta[1,1]", "theta[2,2]"))
     
     rel = relabelMCMC(stan.pi, 50, TRUE, FALSE)
     re.theta = permuteMCMC(stan.theta, rel$perms, "both")
     array_traceplot(to_stan_array(re.theta), "theta")
-    
+    array_traceplot(to_stan_array(re.theta), "theta[1,1]")
+    array_traceplot(to_stan_array(re.theta), c("theta[1,1]", "theta[2,2]"))
+
 })
 

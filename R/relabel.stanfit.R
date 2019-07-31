@@ -117,7 +117,13 @@ to_stan_array = function(x) {
 #' Plots traceplot for Stan-form arrays
 #'
 #' @param x an array created by calling \code{extract_n_combine}
-#' @param par name of the parameter to plot
+#' @param par name of the parameter(s) to plot entered as a sting. 
+#'   This has to be either 
+#'   \itemize{
+#'     \item the name of a single parameter, e.g., \code{"theta[1,2]"}
+#'     \item the name of an matrix/array/vector, e.g., \code{"theta"}
+#'     \item or a vector of single parameters, e.g., \code{c("theta[1,1]", "theta[1,2]")}
+#'   }
 #' @return the function returns a \code{ggplot} object of the traceplot
 #' @export
 array_traceplot = function(x, par) {
@@ -127,14 +133,29 @@ array_traceplot = function(x, par) {
     if(!requireNamespace("reshape2", quietly = T))
         stop("'reshape2' package need to be installed to create traceplots")
     
+    if (!is.character(par))
+        stop("par has to be a character (string) object")
+    
     # original dims
     org.dim = dim(x)
     
     # get pars to plot
-    p.pars = grep(
-        gsub("(\\W)", "\\\\\\1", par) , 
-        dimnames(x)$parameters, 
-        value = TRUE)
+    if (length(par) == 1L) {
+        
+        p.pars = grep(
+            gsub("(\\W)", "\\\\\\1", par) , 
+            dimnames(x)$parameters, 
+            value = TRUE)
+        
+    } else if (length(par) > 1L) {
+        
+        p.pars = dimnames(x)$parameters[match(par, dimnames(x)$parameters)]
+        
+    } else {
+        
+        stop("par has length zero")
+        
+    }
     
     if (length(p.pars) == 0L)
         stop("plotting parameter (par) not found")
@@ -183,8 +204,12 @@ array_traceplot = function(x, par) {
                 option = "D", 
                 begin = .1, 
                 end = .8, 
-                alpha = .6)
-        
+                alpha = .6) +
+            ggplot2::theme(
+                strip.text = ggplot2::element_text(hjust = .1),
+                strip.background = ggplot2::element_blank()
+            )
+
     }
 
 }    
