@@ -180,6 +180,7 @@ array_traceplot = function(x, par) {
             begin = .1, 
             end = .8, 
             alpha = .6) + 
+        ggplot2::labs(x = "Iteration", y = "") +
         ggplot2::ggtitle(par)
         
     } else {
@@ -205,6 +206,7 @@ array_traceplot = function(x, par) {
                 begin = .1, 
                 end = .8, 
                 alpha = .6) +
+            ggplot2::labs(x = "Iteration", y = "") + 
             ggplot2::theme(
                 strip.text = ggplot2::element_text(hjust = .1),
                 strip.background = ggplot2::element_blank()
