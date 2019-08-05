@@ -7,7 +7,7 @@ While the relabeling algorithm proposed in Stephens (2000) has been shown to per
 The `relabelKL` package is simply a `C++` implementation of Stephen's relabeling algorithm. It is implemented using the [Armadillo library](http://arma.sourceforge.net/) and sourced via the `RcppArmadillo` package. If available, the functions provided will use OpenMP to run
 parts of the code in parallel.
 
-## How to use package
+## How to use the package
 
 Using the `devtools` package, `relabelKL` can be directly installed from github:
 
@@ -155,7 +155,7 @@ Other tests that were run to ensure that the algorithm works correctly can be fo
 ## Possible future extensions
 
 1. Right now, the algorithm uses a *brute force* approach by comparing all permutations between the labels to minimize the KL-divergence. If the number of classes/extreme types gets large, this approach might become inefficient since the number of comparisons grows at the order of `K!`. The problem of minimizing the KL-divergence can be, however, formulated as an integer assignment problem for which better algorithms exists. Incorporating these might produce gains in efficiency.
-2. Other relabeling algorithms might be rewritten in `C++` for faster implementation. The translation of algorithms contained in the `label.switching` package, for example, would be quite straightforward.
+2. Other relabeling algorithms might be rewritten in `C++` for faster implementation. 
 
 ## References
 
