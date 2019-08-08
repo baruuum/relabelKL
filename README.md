@@ -151,12 +151,6 @@ sum(res1$permutations != res2$perms)
     
 Other tests that were run to ensure that the algorithm works correctly can be found in the `/tests` directory of this github repo.
 
-
-## Possible future extensions
-
-1. Right now, the algorithm uses a *brute force* approach by comparing all permutations between the labels to minimize the KL-divergence. If the number of classes/extreme types gets large, this approach might become inefficient since the number of comparisons grows at the order of `K!`. The problem of minimizing the KL-divergence can be, however, formulated as an integer assignment problem for which better algorithms exists. Incorporating these might produce gains in efficiency.
-2. Other relabeling algorithms might be rewritten in `C++` for faster implementation. 
-
 ## References
 
 Stephens, M. 2000. "Dealing with label Switching in mixture models," *Journal of the Royal Statistical Society Series B*, 62, 795-809.
