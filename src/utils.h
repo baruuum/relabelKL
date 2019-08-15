@@ -3,7 +3,6 @@
 
 #include <RcppArmadillo.h>
 //[[Rcpp::depends(RcppArmadillo)]]
-//[[Rcpp::plugins(cpp11)]]
 
 using namespace Rcpp;
 
@@ -21,11 +20,11 @@ inline double log_sum_exp(
   
   typename T::const_iterator i; 
 
-  for (i = x.begin() + 1 ; i != x.end() ; ++i)
+  for (i = x.begin() + 1; i != x.end(); ++i)
     if (*i > max_exp)
       max_exp = *i;
 
-  for (i = x.begin(); i != x.end() ; ++i)
+  for (i = x.begin(); i != x.end(); ++i)
     esum += std::exp(*i - max_exp);
 
   return std::log(esum) + max_exp;
@@ -85,15 +84,8 @@ inline double kl_dist_log(
     if (lp.has_inf() || lq.has_inf())
         Rcpp::stop("non-finite elements in input (kl_dist_log)");
     
-    return arma::accu((arma::expm1(lp) + 1.0) % (lp - lq));
+    return arma::accu(arma::exp(lp) % (lp - lq));
     
-    // double kl(0.0);
-    // for (arma::uword i = 0; i < lp.n_elem; ++i) {
-    //         kl += std::exp(lp(i)) * (lp(i) - lq(i));
-    // }
-    // 
-    // return kl;
-
 };
 
 //' Generate permutations
@@ -121,6 +113,7 @@ inline arma::umat gen_permute(
 
     // add org. seq. into the first row
     pmat.row(0) = seq;
+    
     // iterator
     arma::uword it(0L);
 

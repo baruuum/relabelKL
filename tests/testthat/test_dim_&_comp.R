@@ -61,8 +61,8 @@ test_that("results coincide with stephens function from the label.switching pack
         if (has.ls) 
             res1 = label.switching::stephens(test.ar)
         
-        # results of this package
-        res2 = relabelMCMC(test.ar, 100, verbose = F, log.p = F)
+        # results of package
+        res2 = relabelMCMC(test.ar, maxit = 100, verbose = F, log.p = F)
         
         # check dimensions
         expect_true(identical(dim(res2$permuted), dim(test.ar)))
@@ -139,13 +139,22 @@ test_that("2nd relabeling results in identity mapping", {
     for (s in rel.draws) 
         test.ar[s, , ] = test.ar[s, , sample.int(K, K, F)]
 
-    res = relabelMCMC(test.ar, verbose = F, log.p = F)    
-    res2 = relabelMCMC(res$permuted, verbose = F, log.p = F)
+    res = relabelMCMC(test.ar, maxit = 100, verbose = F, log.p = F)    
+    res2 = relabelMCMC(res$permuted, maxit = 100, verbose = F, log.p = F)
     
     expect_equal(res2$iterations, 0L)
     expect_equal(res2$status, 0L)
     expect_equal(res2$permuted, res$permuted)
     expect_equal(res2$perms, matrix(rep(1:K, S), nr = S, byrow = TRUE))
+    
+    # same test for log-scale
+    res.log = relabelMCMC(log(test.ar), maxit = 100, verbose = F, log.p = T)    
+    res.log2 = relabelMCMC(res.log$permuted, maxit = 100, verbose = F, log.p = T)
+    
+    expect_equal(res.log2$iterations, 0L)
+    expect_equal(res.log2$status, 0L)
+    expect_equal(res.log2$permuted, res.log$permuted)
+    expect_equal(res.log2$perms, matrix(rep(1:K, S), nr = S, byrow = TRUE))
 
 })
 
