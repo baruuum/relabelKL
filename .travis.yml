@@ -26,3 +26,4 @@ before_install:
   - mkdir -p ~/tmp2
   - chmod ugo+x ~/tmp2
   - export TMPDIR=~/tmp2
+  - chmod ugo+x $TRAVIS_BUILD_DIR/configure
