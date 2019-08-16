@@ -43,7 +43,3 @@ tmp*
 
 # don't track dll
 *.dll
-
-# configure files
-autom4te.cache/*
-configure.ac
