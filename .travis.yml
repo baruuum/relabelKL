@@ -21,6 +21,7 @@ matrix:
 
 before_install:
   - mkdir ~/tmp
+  - chmod 777 ~tmp
   - export TMPDIR=~/tmp
   - mkdir -p ~/.R/
   - echo "CXX14 = g++-7 -fPIC -flto=2" >> ~/.R/Makevars
