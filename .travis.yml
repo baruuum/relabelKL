@@ -20,7 +20,8 @@ matrix:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
 before_install:
-  - mkdir -p ~/tmp2/
+  - mkdir -p ~/tmp2
+  - chmod -R 777 ~/tmp2
   - export TMPDIR=~/tmp2
   - mkdir -p ~/.R/
   - echo "CXX14 = g++-7 -fPIC -flto=2" >> ~/.R/Makevars
