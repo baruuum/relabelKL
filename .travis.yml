@@ -25,4 +25,6 @@ before_install:
   - echo "CXX14FLAGS = -mtune=native -march=native -Wno-unused-variable -Wno-unused-function -Wno-unused-local-typedefs -Wno-ignored-attributes -Wno-deprecated-declarations -Wno-attributes -O3" >> ~/.R/Makevars
 
 before_script:
-  - chmod ugo+x $TRAVIS_BUILD_DIR/configure
+  - mkdir -p $TRAVIS_BUILD_DIR/tmp2
+  - chmod ugo+x $TRAVIS_BUILD_DIR/tmp2
+  - export TMPDIR=$TRAVIS_BUILD_DIR/tmp2
