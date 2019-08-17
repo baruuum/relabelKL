@@ -8,18 +8,18 @@ cache: packages
 # added lines to install rstan on travis 
 # source: https://github.com/dmenne/breathteststan/blob/master/.travis.yml
 
-# matrix:
-  # include:
-    # - os: linux
-      # addons:
-        # apt:
-          # sources:
-            # - ubuntu-toolchain-r-test
-          # packages:
-            # - g++-7
-            # - gcc-7
-      # env:
-        # - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+            - gcc-7
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
 before_install:
   - chmod +x ./configure
