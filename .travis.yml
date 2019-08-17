@@ -30,6 +30,9 @@ before_install:
 
 install:
   - R -e "install.packages('rstan')"
+  - R -e "install.packages('Rcpp')"
+  - R -e "install.packages('RcppArmadillo')"
+  - R -e "install.packages('testthat')"
 
 # added to run configure script for OpenMP problems on macOS & clang
 # compiler:
