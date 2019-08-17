@@ -35,9 +35,9 @@ install:
   - R -e "install.packages('testthat')"
 
 # added to run configure script for OpenMP problems on macOS & clang
-compiler:
-  - clang
-  - gcc
+# compiler:
+  # - clang
+  # - gcc
 
 # before_script:
   # - ./configure
