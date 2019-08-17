@@ -15,6 +15,3 @@ PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) @OPENMP_CXXFLAGS@
 # Besides of the -fopenmp flag, here I'm telling armadillo to use
 # 64BIT_WORD which removes the matrix size limit constraint.
 PKG_CXXFLAGS=@OPENMP_CXXFLAGS@ -DARMA_64BIT_WORD
-
-CXX14 = g++ -fPIC -flto=2
-CXX14FLAGS = -mtune=native -march=native -Wno-unused-variable -Wno-unused-function -Wno-unused-local-typedefs -Wno-ignored-attributes -Wno-deprecated-declarations -Wno-attributes -O3
