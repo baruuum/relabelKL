@@ -1,6 +1,5 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-dist: trusty
 language: R
 sudo: required
 cache: packages
@@ -20,7 +19,7 @@ matrix:
             - gcc-7
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-
+        
 before_install:
   - chmod +x ./configure
   - chmod +x ./cleanup
