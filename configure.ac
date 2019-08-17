@@ -23,25 +23,40 @@ AC_REQUIRE_CPP
 ## Compiler flag check
 AC_PROG_CXX
 
-## Borrowed from BHC/imager/icd/randomForest
-# Check for OpenMP 
-AC_OPENMP 
+## OpenMP support (from https://github.com/USCbiostats/software-dev/wiki/Setting-up-optional-OpenMP-support)
+dnl this the meat of R's m4/openmp.m4
+  OPENMP_[]_AC_LANG_PREFIX[]FLAGS=
+  AC_ARG_ENABLE([openmp],
+    [AS_HELP_STRING([--disable-openmp], [do not use OpenMP])])
+  if test "$enable_openmp" != no; then
+    AC_CACHE_CHECK([for $[]_AC_CC[] option to support OpenMP],
+      [ac_cv_prog_[]_AC_LANG_ABBREV[]_openmp],
+      [AC_LINK_IFELSE([_AC_LANG_OPENMP],
+   	 [ac_cv_prog_[]_AC_LANG_ABBREV[]_openmp='none needed'],
+	 [ac_cv_prog_[]_AC_LANG_ABBREV[]_openmp='unsupported'
+	  for ac_option in -fopenmp -xopenmp -qopenmp \
+                           -openmp -mp -omp -qsmp=omp -homp \
+			   -fopenmp=libomp \
+                           -Popenmp --openmp; do
+	    ac_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
+	    _AC_LANG_PREFIX[]FLAGS="$[]_AC_LANG_PREFIX[]FLAGS $ac_option"
+	    AC_LINK_IFELSE([_AC_LANG_OPENMP],
+	      [ac_cv_prog_[]_AC_LANG_ABBREV[]_openmp=$ac_option])
+	    _AC_LANG_PREFIX[]FLAGS=$ac_save_[]_AC_LANG_PREFIX[]FLAGS
+	    if test "$ac_cv_prog_[]_AC_LANG_ABBREV[]_openmp" != unsupported; then
+	      break
+	    fi
+	  done])])
+    case $ac_cv_prog_[]_AC_LANG_ABBREV[]_openmp in #(
+      "none needed" | unsupported)
+	;; #(
+      *)
+	OPENMP_[]_AC_LANG_PREFIX[]FLAGS=$ac_cv_prog_[]_AC_LANG_ABBREV[]_openmp ;;
+    esac
+  fi
 
-# since some systems have broken OMP libraries
-# we also check that the actual package will work
-ac_pkg_openmp=no
-if test -n "${OPENMP_CFLAGS}"; then
-  AC_MSG_CHECKING([OpenMP detected, checking if viable for package use])
-  AC_LANG_CONFTEST([AC_LANG_PROGRAM([[#include <omp.h>]], [[ return omp_get_num_threads (); ]])])
-  "$RBIN" CMD SHLIB conftest.c 1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && "$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" 1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && ac_pkg_openmp=yes
-  AC_MSG_RESULT([${ac_pkg_openmp}])
-fi
-
-# if ${ac_pkg_openmp} = "yes" then we have OMP, otherwise it will be "no"
-if test "${ac_pkg_openmp}" = no; then 
-  AC_MSG_WARN([No OpenMP support. If using GCC, upgrade to >= 4.2. If using clang, upgrade to >= 3.8.0])
-  AC_MSG_ERROR([Please use a different compiler.])   
-fi 
+AC_SUBST(OPENMP_CXXFLAGS)
+AC_CONFIG_FILES([src/Makevars])
 
 # Fin
 AC_OUTPUT
