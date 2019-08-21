@@ -6,7 +6,7 @@ While the relabeling algorithm proposed in Stephens (2000) has been shown to per
 
 The `relabelKL` package is simply a `C++` implementation of Stephen's relabeling algorithm. It is implemented using the [Armadillo library](http://arma.sourceforge.net/) and sourced via the `RcppArmadillo` package. If available, the functions provided will use OpenMP to run parts of the code in parallel. 
 
-_Note: If your machine has uses an old version of clang with no support for OpenMP, the installation of the package might fail._
+_Note: If your machine uses an old version of clang with no support for OpenMP, you might have difficulties in installing the package._
 
 ## How to use the package
 
