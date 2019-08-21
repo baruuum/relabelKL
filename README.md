@@ -4,8 +4,9 @@
 
 While the relabeling algorithm proposed in Stephens (2000) has been shown to perform well in dealing with the label switching phenomenon in Bayesian finite mixture models, it has been pointed out that it is computationally expensive. Currently, the `label.switching::stephens` function implements Stephens' method. Yet, as it is written in `R`, it is rather slow, which makes it impractical to use on MCMC output of moderate size.
 
-The `relabelKL` package is simply a `C++` implementation of Stephen's relabeling algorithm. It is implemented using the [Armadillo library](http://arma.sourceforge.net/) and sourced via the `RcppArmadillo` package. If available, the functions provided will use OpenMP to run
-parts of the code in parallel.
+The `relabelKL` package is simply a `C++` implementation of Stephen's relabeling algorithm. It is implemented using the [Armadillo library](http://arma.sourceforge.net/) and sourced via the `RcppArmadillo` package. If available, the functions provided will use OpenMP to run parts of the code in parallel. 
+
+_Note: If your machine has uses an old version of clang with no support for OpenMP, the installation of the package might fail._
 
 ## How to use the package
 
