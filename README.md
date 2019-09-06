@@ -2,11 +2,13 @@
 
 ## C++ implementation of the relabeling method proposed by Stephens(2000)
 
-While the relabeling algorithm proposed in Stephens (2000) has been shown to perform well in dealing with the label switching phenomenon in Bayesian finite mixture models, it has been pointed out that it is computationally expensive. Currently, the `label.switching::stephens` function implements Stephens' method. Yet, as it is written in `R`, it is rather slow, which makes it impractical to use on MCMC output of moderate size.
+While the relabeling algorithm proposed in Stephens (2000) has been shown to perform well in dealing with the label switching phenomenon in Bayesian finite mixture models, and has the attractive feature of requiring no additional information beyond the posterior samples, it has been pointed out that it is computationally expensive. Currently, the `label.switching::stephens` function provides the only `R` implementation of Stephens' method. Yet, the function is rather slow, which makes it impractical to use on MCMC output of moderate size.
 
-The `relabelKL` package is simply a `C++` implementation of Stephen's relabeling algorithm. It is implemented using the [Armadillo library](http://arma.sourceforge.net/) and sourced via the `RcppArmadillo` package. If available, the functions provided will use OpenMP to run parts of the code in parallel. 
+The `relabelKL` package is a `C++` implementation of Stephen's relabeling algorithm. It is implemented using the [Armadillo library](http://arma.sourceforge.net/) and sourced via the `RcppArmadillo` package. If available, the functions provided will use OpenMP to run parts of the code in parallel. The package provides also a set of helper functions to facilitate the integration with `stanfit` objects produced via the `rstan` package.
 
-_Note: If your machine uses an old version of clang with no support for OpenMP, you might have difficulties in installing the package._
+A comparison between the performance of the `label.switching::stephens` function and the `relabelKL::relabelMCMC` function is provided at the end of this document.
+
+_Note: If your machine uses an old version of clang with no support for OpenMP, you might have difficulties in installing the package. Accomodations for old clang compilers will be incorporated in the next version of the package._
 
 ## How to use the package
 
