@@ -8,7 +8,7 @@ The `relabelKL` package is a `C++` implementation of Stephen's relabeling algori
 
 A comparison between the performance of the `label.switching::stephens` function and the `relabelKL::relabelMCMC` function is provided at the end of this document.
 
-_Note: If your machine uses an old version of clang with no support for OpenMP, you might have difficulties in installing the package. Accomodations for old clang compilers will be incorporated in the next version of the package. You might also consult [this](https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/) webpage to install newer versions of clang that support OpenMp._
+_Note: If your machine uses an old version of clang with no support for OpenMP, you might have difficulties in installing the package. Accomodations for old clang compilers will be incorporated in the next version of the package. You might also consult [this webpage](https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/) to install newer versions of clang that support OpenMp._
 
 ## How to use the package
 
