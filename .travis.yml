@@ -26,14 +26,14 @@ sudo: false
   # - echo "CXX14 = g++-7 -fPIC -flto=2" >> ~/.R/Makevars
   # - echo "CXX14FLAGS = -mtune=native -march=native -Wno-unused-variable -Wno-unused-function -Wno-unused-local-typedefs -Wno-ignored-attributes -Wno-deprecated-declarations -Wno-attributes -O3" >> ~/.R/Makevars
 
-r:
-  - release
-  - oldrel
+#r:
+#  - release
+#  - oldrel
 
-os:
-  - linux
-  - osx
-  - windows
+#os:
+#  - linux
+#  - osx
+#  - windows
 
 # osx_image: xcode7.3
 
