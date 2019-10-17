@@ -2,7 +2,7 @@
 
 dist: trusty
 language: r
-sudo: false
+sudo: true
 
 # added lines to install rstan on travis 
 # source: https://github.com/dmenne/breathteststan/blob/master/.travis.yml
@@ -18,7 +18,14 @@ sudo: false
             # - g++-7
       # env:
         # - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-        
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-7
+    - g++-7
+    
 before_install:
   - chmod +x ./configure
   - chmod +x ./cleanup
