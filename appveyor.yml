@@ -23,11 +23,21 @@ environment:
     R_CHECK_ARGS: --no-manual --as-cran
 
 build_script:
+  - travis-tool.sh knitr
+  - travis-tool.sh rmarkdown
+  - travis-tool.sh Rcpp
+  - travis-tool.sh RcppArmadillo
+  - travis-tool.sh testthat
+  - travis-tool.sh label.switching
+  - travis-tool.sh abind
+  - travis-tool.sh rstan
+  - travis-tool.sh ggplot2
+  - travis-tool.sh reshape2
+  - travis-tool.sh covr
   - travis-tool.sh install_deps
 
-test: off
-#test_script:
-#  - travis-tool.sh run_tests
+test_script:
+  - travis-tool.sh run_tests
 
 on_failure:
   - 7z a failure.zip *.Rcheck\*
