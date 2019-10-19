@@ -1,3 +1,4 @@
+library("relabelKL")
 context("Permuting and monitoring stanfit objects")
 
 test_that("extract and back-transformation works", {

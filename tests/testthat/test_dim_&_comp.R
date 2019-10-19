@@ -1,3 +1,4 @@
+library("relabelKL")
 context("Check Dimensions and Compare with label.swithching package")
 
 has_ls = requireNamespace("label.switching", quietly = T)
@@ -162,8 +163,7 @@ test_that("2nd relabeling results in identity mapping", {
 
     res = relabelMCMC(test_ar, maxit = 100, verbose = F, log.p = F)    
     res2 = relabelMCMC(res$permuted, maxit = 100, verbose = T, log.p = F)
-    res2$iterations
-    
+
     expect_equal(res2$iterations, 0L)
     expect_equal(res2$status, 0L)
     expect_equal(res2$permuted, res$permuted)
