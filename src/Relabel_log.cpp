@@ -142,22 +142,12 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
             }
 #else
 
-            if (K > 3) {
+            
 
-                #pragma omp parallel for
-                for (arma::uword n = 0; n < n_perms; ++n) {
+            #pragma omp parallel for if (K > 3)
+            for (arma::uword n = 0; n < n_perms; ++n) {
 
-                    kl_q(n) = kl_dist_log(permute_mat(lP_hat, perms.row(n).t(), 0L), lQ_hat);
-
-                }
-
-            } else {
-
-                for (arma::uword n = 0; n < n_perms; ++n) {
-
-                    kl_q(n) = kl_dist_log(permute_mat(lP_hat, perms.row(n).t(), 0L), lQ_hat);
-
-                }
+                kl_q(n) = kl_dist_log(permute_mat(lP_hat, perms.row(n).t(), 0L), lQ_hat);
 
             }
 
@@ -182,8 +172,8 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
 #ifndef _OPENMP
 
         for (arma::uword i = 0; i < N; ++i)
-          for (arma::uword j = 0; j < K; ++j)
-            lQ_hat_new(i,j) = log_sum_exp(arma::vec(res(arma::span(i), arma::span(j), arma::span::all)));
+            for (arma::uword j = 0; j < K; ++j)
+                lQ_hat_new(i,j) = log_sum_exp(arma::vec(res(arma::span(i), arma::span(j), arma::span::all)));
 
         lQ_hat_new -= std::log(S);
 
@@ -195,11 +185,11 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
         #pragma omp parallel for
         for (arma::uword i = 0; i < N; ++i) {
 
-          for (arma::uword j = 0; j < K; ++j) {
+            for (arma::uword j = 0; j < K; ++j) {
 
-            lQ_hat_new(i,j) = log_sum_exp(arma::vec(res(arma::span(i), arma::span(j), arma::span::all)));
+                lQ_hat_new(i,j) = log_sum_exp(arma::vec(res(arma::span(i), arma::span(j), arma::span::all)));
 
-          }
+            }
 
         }
 
