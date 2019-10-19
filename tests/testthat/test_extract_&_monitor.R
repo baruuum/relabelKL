@@ -50,6 +50,8 @@ test_that("extract and back-transformation works", {
     
     # check whether rstan::monitor function can be applied
     mres = rstan::monitor(to_stan_array(stan_theta))
-
+    expect_equal(attr(stan_theta, "org.att")$dimnames$parameters,
+                 rownames(mres))
+    
 })
 

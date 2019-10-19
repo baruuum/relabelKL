@@ -35,7 +35,18 @@ test_that("relabelMCMC throws appropriate errors with log/non-log input", {
 
 
 test_that("relabelMCMC works in both verbose and non-verbose mode", {
-  
+    
+    N = sample(20:100, 1)
+    K = sample(2:4, 1)
+    pvec = runif(K, 0.1, 1.0) * runif(1, 0.1, 10)
+    S = 100
+
+    # generate array 
+    test_ar = simplify2array(
+                lapply(1:S, function(w) rdirichlet(N, pvec))
+              )
+    # reshuffle dimensions to match arg
+    test_ar = aperm(test_ar, c(3, 1, 2))
     expect_output(relabelMCMC(test_ar, 100, T, F), regexp = ".")
     expect_silent(relabelMCMC(test_ar, 100, F, F))
     expect_output(relabelMCMC(log(test_ar), 100, T, T), regexp = ".")
