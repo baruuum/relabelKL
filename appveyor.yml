@@ -22,7 +22,6 @@ environment:
     R_ARCH: x64
     R_VERSION: release
     use_RTOOLS: true
-    R_CHECK_ARGS: --no-manual --as-cran --run-donttest
 
 build_script:
   - travis-tool.sh knitr
@@ -38,8 +37,10 @@ build_script:
   - travis-tool.sh covr
   - travis-tool.sh install_deps
 
-test_script:
-  - travis-tool.sh run_tests
+#test_script:
+#  - travis-tool.sh run_tests
+
+test: false
 
 on_failure:
   - 7z a failure.zip *.Rcheck\*
