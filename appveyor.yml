@@ -15,11 +15,15 @@ cache:
 
 # Adapt as necessary starting from here
 
+platform: x64
+
 environment:
   global:
     WARNINGS_ARE_ERRORS: true
+    _R_CHECK_FORCE_SUGGESTS_: false
     R_ARCH: x64
     R_VERSION: release
+    use_RTOOLS: true
     R_CHECK_ARGS: --no-manual --as-cran
 
 build_script:
