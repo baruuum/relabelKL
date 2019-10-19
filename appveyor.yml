@@ -16,8 +16,10 @@ cache:
 # Adapt as necessary starting from here
 
 environment:
-  R_ARCH: x64
-  use_RTOOLS: true
+  global:
+    WARNINGS_ARE_ERRORS: true
+    R_ARCH: x64
+    use_RTOOLS: true
 
 build_script:
   - travis-tool.sh install_deps

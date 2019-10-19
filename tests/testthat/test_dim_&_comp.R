@@ -1,4 +1,3 @@
-library("relabelKL")
 context("Check Dimensions and Compare with label.swithching package")
 
 has_ls = requireNamespace("label.switching", quietly = T)
