@@ -161,7 +161,8 @@ test_that("2nd relabeling results in identity mapping", {
         test_ar[s, , ] = test_ar[s, , sample.int(K, K, F)]
 
     res = relabelMCMC(test_ar, maxit = 100, verbose = F, log.p = F)    
-    res2 = relabelMCMC(res$permuted, maxit = 100, verbose = F, log.p = F)
+    res2 = relabelMCMC(res$permuted, maxit = 100, verbose = T, log.p = F)
+    res2$iterations
     
     expect_equal(res2$iterations, 0L)
     expect_equal(res2$status, 0L)
@@ -171,6 +172,8 @@ test_that("2nd relabeling results in identity mapping", {
     # same test for log-scale
     res_log = relabelMCMC(log(test_ar), maxit = 100, verbose = F, log.p = T)    
     res_log2 = relabelMCMC(res_log$permuted, maxit = 100, verbose = F, log.p = T)
+    
+    a = relabelMCMC(res_log$permuted, maxit = 100, verbose = F, log.p = T)$iterations
     
     expect_equal(res_log2$iterations, 0L)
     expect_equal(res_log2$status, 0L)
