@@ -19,6 +19,8 @@ environment:
   global:
     WARNINGS_ARE_ERRORS: true
     R_ARCH: x64
+    R_VERSION: release
+    R_CHECK_ARGS: --no-manual --as-cran
 
 build_script:
   - travis-tool.sh install_deps
