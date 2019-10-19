@@ -15,8 +15,6 @@ cache:
 
 # Adapt as necessary starting from here
 
-platform: x64
-
 environment:
   global:
     WARNINGS_ARE_ERRORS: true
@@ -24,7 +22,7 @@ environment:
     R_ARCH: x64
     R_VERSION: release
     use_RTOOLS: true
-    R_CHECK_ARGS: --no-manual --as-cran
+    R_CHECK_ARGS: --no-manual --as-cran --run-donttest
 
 build_script:
   - travis-tool.sh knitr
