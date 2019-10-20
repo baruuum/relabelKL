@@ -100,7 +100,6 @@ Rcpp::List relabel_kl(const arma::cube & phi,
             
             arma::mat P_hat = res.slice(s);
             arma::colvec kl_q(n_perms);
-    
             
             // calc permutation that minimizes KL-dist to p
             arma::uword n;
@@ -112,24 +111,12 @@ Rcpp::List relabel_kl(const arma::cube & phi,
                 kl_q(n) = kl_dist(permute_mat(P_hat, perms.row(n).t(), 0L), Q_hat);
                 
             }
-#else 
             
-            if (K > 3) {
-                
-                #pragma omp parallel for 
-                for (n = 0; n < n_perms; ++n) {
-                        
-                        kl_q(n) = kl_dist(permute_mat(P_hat, perms.row(n).t(), 0L), Q_hat);
+#else 
+            #pragma omp parallel for if (K > 3)
+            for (n = 0; n < n_perms; ++n) {
                     
-                }
-                
-            } else {
-                
-                for (n = 0; n < n_perms; ++n) {
-                    
-                    kl_q(n) = kl_dist(permute_mat(P_hat, perms.row(n).t(), 0L), Q_hat);
-                    
-                }
+                kl_q(n) = kl_dist(permute_mat(P_hat, perms.row(n).t(), 0L), Q_hat);
                 
             }
             

@@ -22,6 +22,12 @@ extract_n_combine = function(fit, par) {
     if (!requireNamespace("abind", quietly = T))
         stop("please install the 'abind' package for this function to work")
 
+    if (class(fit) != "stanfit")
+        stop("fit has to be a stanfit object")
+    
+    if (!is.character(par))
+        stop("par has to be a character object")
+    
     # extract pivot as array
     p = rstan::extract(fit, pars = par, permute = FALSE, inc_warmup = FALSE)
 
@@ -56,7 +62,7 @@ extract_n_combine = function(fit, par) {
 #' @export
 to_stan_array = function(x) {
     
-        if (!is.array(x))
+    if (!is.array(x))
         stop("x has to be an array")
     
     att.names = names(attributes(x))
