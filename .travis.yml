@@ -54,6 +54,12 @@ r_packages:
   - rstan
   - RcppArmadillo
   - testthat
+  - label.switching
+  - reshape2
+  - abind
+
+after_success:
+  - Rscript -e 'covr::codecov()'
   
 # install:
   # - R -e "install.packages('rstan')"

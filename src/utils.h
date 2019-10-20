@@ -142,7 +142,6 @@ inline arma::urowvec permute_urowvec(
     if (order.min() != 0)
         Rcpp::stop("order vector has to start from 0 (permute_vec)");
 
-
     if (x.n_elem != order.n_elem)
         Rcpp::stop("size mismatch (permute_vec)");
 
