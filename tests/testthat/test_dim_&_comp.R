@@ -2,7 +2,7 @@ context("Check Dimensions and Compare with label.swithching package")
 
 # skip on 32bit windows (have to figure out what's going wrong here)
 if (.Platform$OS.type == "windows" && .Platform$r_arch == "i386")
-    skip_appveyor()
+    skip_on_appveyor()
 
 has_ls = requireNamespace("label.switching", quietly = T)
 

@@ -2,7 +2,7 @@ context("Permuting and monitoring stanfit objects")
 
 # skip on 32bit windows (have to figure out what's going wrong here)
 if (.Platform$OS.type == "windows" && .Platform$r_arch == "i386")
-    skip_appveyor()
+    skip_on_appveyor()
 
 test_that("extract and back-transformation works", {
     
