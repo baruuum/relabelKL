@@ -28,7 +28,7 @@ environment:
       GCC_PATH: mingw_32
 
 build_script:
-  - travis-tool.sh instal_r knitr rmarkdown Rcpp RcppArmadillo testthat label.switching abind rstan ggplot2 reshape2 covr
+  - travis-tool.sh install_r knitr rmarkdown Rcpp RcppArmadillo testthat label.switching abind rstan ggplot2 reshape2 covr
   - travis-tool.sh install_deps
 
 test_script:
