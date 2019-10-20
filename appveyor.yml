@@ -19,11 +19,12 @@ environment:
   global:
     WARNINGS_ARE_ERRORS: true
     _R_CHECK_FORCE_SUGGESTS_: false
-    matrix:
-      - R_ARCH: x64
-      - R_ARCH: i386
     R_VERSION: release
     use_RTOOLS: true
+  matrix:
+    - R_ARCH: x64
+    - R_ARCH: i386
+
 
 build_script:
   - travis-tool.sh knitr
