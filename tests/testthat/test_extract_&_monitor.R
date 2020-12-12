@@ -47,13 +47,13 @@ test_that("extract and back-transformation works", {
     # check whether relabeling routine works
     stan_pi = extract_n_combine(mmsbm, "pi")
     stan_theta = extract_n_combine(mmsbm, "theta")
-    rel = relabelMCMC(stan_pi, log_p = F, renormalize = F, 50, 0, FALSE)
+    rel = relabelMCMC(stan_pi, log_p = F, renormalize = T, 50, 0, FALSE)
     re_theta = permuteMCMC(stan_theta, rel$perms, "both")
     a = array_traceplot(to_stan_array(re_theta), "theta")
     expect_equal(class(a)[2], "ggplot")
     
     # check whether rstan::monitor function can be applied
-    mres = rstan::monitor(to_stan_array(stan_theta))
+    mres = rstan::monitor(to_stan_array(stan_theta), print = FALSE)
     expect_equal(attr(stan_theta, "org.att")$dimnames$parameters,
                  rownames(mres))
     
