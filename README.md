@@ -31,9 +31,11 @@ Relabeling MCMC output is done by the `relabelMCMC` function. The function takes
 
 Three options might be specified: 
 
-1. `maxit`: the number of maximum iterations (defaults to `maxit = 100`);
-2. `verbose`: whether intermediate results should be printed (defaults to `verbose = TRUE`); and
-3. `log.p`: whether the entries are log-probabilities or probabilities (defaults to `log.p = TRUE`)
+1. `log_p`: whether the entries are log-probabilities or probabilities (defaults to `log_p = TRUE`)
+2. `renormalize`: if `TRUE` renormalizes the rows of each slice of `x` to sum to one
+3. `maxit`: the number of maximum iterations (defaults to `maxit = 100`)
+4. `nthreads`: number of threads to use in calculation (if OPENMP is enabled)
+5. `verbose`: whether intermediate results should be printed (defaults to `verbose = TRUE`); and
 
 Calling `relabelMCMC` on the array `x`
 ``` r

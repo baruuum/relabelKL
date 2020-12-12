@@ -1,8 +1,8 @@
 context("Permuting and monitoring stanfit objects")
 
 # skip on 32bit windows (have to figure out what's going wrong here)
-if (.Platform$OS.type == "windows" && .Platform$r_arch == "i386")
-    skip_on_appveyor()
+# if (.Platform$OS.type == "windows" && .Platform$r_arch == "i386")
+#     skip_on_appveyor()
 
 test_that("extract and back-transformation works", {
     
@@ -47,7 +47,7 @@ test_that("extract and back-transformation works", {
     # check whether relabeling routine works
     stan_pi = extract_n_combine(mmsbm, "pi")
     stan_theta = extract_n_combine(mmsbm, "theta")
-    rel = relabelMCMC(stan_pi, 50, FALSE, FALSE)
+    rel = relabelMCMC(stan_pi, log_p = F, renormalize = F, 50, 0, FALSE)
     re_theta = permuteMCMC(stan_theta, rel$perms, "both")
     a = array_traceplot(to_stan_array(re_theta), "theta")
     expect_equal(class(a)[2], "ggplot")

@@ -5,7 +5,6 @@
 
 using namespace Rcpp;
 
-
 // add openmp support if available
 #ifdef _OPENMP
 
@@ -34,7 +33,9 @@ double lse(const NumericVector & x) {
 //' @param lphi cube of length \code{S}, each element of which is a 
 //'     matrix of dimension N times K, where N is the number of individuals 
 //'     and K is the number of extreme types (or classes).
+//' @param renormalize if \code{true}, renormalizes the rows of each slice of \code{lphi}
 //' @param maxit the number of maximum iterations to run, defaults to 100.
+//' @param nthreads number of threads to use in parallel processing
 //' @param verbose if TRUE, number of iterations and corresponding KL-distance 
 //'     values are printed. 
 //' @return The function returns a Rcpp::List of three elements. 
@@ -47,15 +48,36 @@ double lse(const NumericVector & x) {
 //'     loop is parallelized only if the number of latent classes/types
 //'     is larger than 3.
 //[[Rcpp::export]]
-Rcpp::List relabel_kl_log(const arma::cube & lphi, 
-                      arma::uword maxit = 100L,
-                      bool verbose = true) {
+Rcpp::List relabel_kl_log(
+    const arma::cube & lphi,
+    bool renormalize = false,
+    arma::uword maxit = 100L,
+    arma::uword nthreads = 0L,
+    bool verbose = true
+) {
+  
+#ifdef _OPENMP
+  
+  if (nthreads == 0L)
+     nthreads = omp_get_num_threads();
+  
+  omp_set_num_threads(nthreads);
+  
+#endif
 
     arma::uword S = lphi.n_slices;   // no. sims
     arma::uword K = lphi.n_cols;     // no. labels
     arma::uword N = lphi.n_rows;     // no. inds
     
     arma::cube res(lphi);
+    
+    // renormalize if requested
+    if (renormalize) {
+
+      for (arma::uword s = 0; s < S; ++s)
+          res.slice(s).each_row( [](arma::rowvec& v){ v = v - log_sum_exp(v); } );
+
+    }
 
     // generate matrix of possible permutations
     arma::umat perms = gen_permute(K);    
@@ -71,18 +93,7 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
     arma::mat lQ_hat(N, K), lQ_hat_new(N, K);
     double meankl(0.0), meankl_new(0.0);
 
-#ifndef _OPENMP
-
-    for (arma::uword i = 0; i < N; ++i)
-      for (arma::uword j = 0; j < K; ++j)
-        lQ_hat(i,j) = log_sum_exp(arma::vec(res(arma::span(i), arma::span(j), arma::span::all)));
-
-    lQ_hat -= std::log(S);
-
-    for (arma::uword s = 0; s < S; ++s)
-        meankl += kl_dist_log(res.slice(s), lQ_hat);
-
-#else
+#ifdef _OPENMP
 
     #pragma omp parallel for
     for (arma::uword i = 0; i < N; ++i) {
@@ -104,6 +115,17 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
 
     }
 
+#else
+    
+    for (arma::uword i = 0; i < N; ++i)
+      for (arma::uword j = 0; j < K; ++j)
+        lQ_hat(i,j) = log_sum_exp(arma::vec(res(arma::span(i), arma::span(j), arma::span::all)));
+    
+    lQ_hat -= std::log(S);
+    
+    for (arma::uword s = 0; s < S; ++s)
+      meankl += kl_dist_log(res.slice(s), lQ_hat);
+    
 #endif
     
     meankl /= S;
@@ -133,14 +155,8 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
         
             // calc permutation that minimizes KL-dist to p
 
-#ifndef _OPENMP
-            
-            for (arma::uword n = 0; n < n_perms; ++n) {
-                
-                kl_q(n) = kl_dist_log(permute_mat(lP_hat, perms.row(n).t(), 0L), lQ_hat);
-                
-            }
-#else
+
+#ifdef _OPENMP
 
             
 
@@ -151,6 +167,11 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
 
             }
 
+#else
+            
+            for (arma::uword n = 0; n < n_perms; ++n)
+              kl_q(n) = kl_dist_log(permute_mat(lP_hat, perms.row(n).t(), 0L), lQ_hat);
+              
 #endif
 
             // index of min-KL permutation
@@ -169,18 +190,7 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
         // update Q_hat and meankl
         meankl_new = 0.0;
         
-#ifndef _OPENMP
-
-        for (arma::uword i = 0; i < N; ++i)
-            for (arma::uword j = 0; j < K; ++j)
-                lQ_hat_new(i,j) = log_sum_exp(arma::vec(res(arma::span(i), arma::span(j), arma::span::all)));
-
-        lQ_hat_new -= std::log(S);
-
-        for (arma::uword s = 0; s < S; ++s)
-            meankl_new += kl_dist_log(res.slice(s), lQ_hat_new);
-
-#else
+#ifdef _OPENMP
 
         #pragma omp parallel for
         for (arma::uword i = 0; i < N; ++i) {
@@ -201,7 +211,18 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
             meankl_new += kl_dist_log(res.slice(s), lQ_hat);
 
         }
-
+        
+#else
+        
+        for (arma::uword i = 0; i < N; ++i)
+          for (arma::uword j = 0; j < K; ++j)
+            lQ_hat_new(i,j) = log_sum_exp(arma::vec(res(arma::span(i), arma::span(j), arma::span::all)));
+        
+        lQ_hat_new -= std::log(S);
+        
+        for (arma::uword s = 0; s < S; ++s)
+          meankl_new += kl_dist_log(res.slice(s), lQ_hat_new);
+        
 #endif
 
         meankl_new /= S;
@@ -251,6 +272,8 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
 //'   Elements of \code{lphi} should be log-probabilities.
 //' @param lphi_true a \code{N} times \code{K} matrix containing the "true"
 //'   values of latent-class/mixed-membership probabilities on the log-scale
+//' @param renormalize whether to renormalize the rows of \code{lphi}
+//' @param nthreads number of threads to use if OPENMP is enabled
 //' @param verbose if true, KL-divergence from true labels is calculated
 //'   and printed before and after relabeling
 //' @return Returns a Rcpp::List with two elements: 1) A arma::cube, 
@@ -265,13 +288,34 @@ Rcpp::List relabel_kl_log(const arma::cube & lphi,
 Rcpp::List relabel_true_log(
         const arma::cube & lphi, 
         const arma::mat & lphi_true,
-        bool verbose = false) {
+        bool renormalize = false,
+        arma::uword nthreads = 0L,
+        bool verbose = false
+) {
 
+  
+#ifdef _OPENMP
+  
+  if (nthreads == 0L)
+    nthreads = omp_get_num_threads();
+  
+  omp_set_num_threads(nthreads);
+  
+#endif
+  
     arma::uword S = lphi.n_slices;   // no. sims
     arma::uword K = lphi.n_cols;     // no. labels
     
     arma::cube res(lphi);
 
+    // renormalize if requested
+    if (renormalize) {
+      
+      for (arma::uword s = 0; s < S; ++s) 
+        res.slice(s).each_row( [](arma::rowvec& v){ v = v - log_sum_exp(v); } );
+      
+    }
+    
     // generate matrix of possible permutations
     arma::umat perms = gen_permute(K);    
 
@@ -290,17 +334,18 @@ Rcpp::List relabel_true_log(
 
         double meankl(0.0);
     
-#ifndef _OPENMP
-        
-        for (s = 0; s < S; ++s)
-            meankl += kl_dist_log(res.slice(s), lphi_true);
-        
-#else
+
+#ifdef _OPENMP
 
         #pragma omp parallel for reduction(+: meankl)
         for (s = 0; s < S; ++s)
             meankl += kl_dist_log(res.slice(s), lphi_true);
 
+#else
+        
+        for (s = 0; s < S; ++s)
+          meankl += kl_dist_log(res.slice(s), lphi_true);
+        
 #endif
     
         meankl /= S;
@@ -324,15 +369,7 @@ Rcpp::List relabel_true_log(
         // calc permutation that minimizes KL-dist to p
         arma::uword n;
             
-#ifndef _OPENMP
-            
-        for (n = 0; n < n_perms; ++n) {
-            
-            kl_q(n) = kl_dist_log(permute_mat(lP_hat, perms.row(n).t(), 0L), lphi_true);
-            
-        }
-        
-#else
+#ifdef _OPENMP
 
         #pragma omp parallel for if (K > 3)
         for (n = 0; n < n_perms; ++n) {
@@ -341,6 +378,12 @@ Rcpp::List relabel_true_log(
 
         }
 
+#else
+        
+        for (n = 0; n < n_perms; ++n)
+          kl_q(n) = kl_dist_log(permute_mat(lP_hat, perms.row(n).t(), 0L), lphi_true);
+        
+        
 #endif
 
         // index of min-KL permutation
@@ -361,18 +404,18 @@ Rcpp::List relabel_true_log(
         // recalculate meankl
         double meankl_new(0.0);
 
-#ifndef _OPENMP
-
-        for (s = 0; s < S; ++s) 
-            meankl_new += kl_dist_log(res.slice(s), lphi_true);
-
-#else
+#ifdef _OPENMP
 
         #pragma omp parallel for reduction(+: meankl_new)
         for (s = 0; s < S; ++s) {
             meankl_new += kl_dist_log(res.slice(s), lphi_true);
         }
-
+        
+#else
+        
+        for (s = 0; s < S; ++s) 
+          meankl_new += kl_dist_log(res.slice(s), lphi_true);
+        
 #endif
 
         meankl_new /= S;

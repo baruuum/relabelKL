@@ -6,19 +6,23 @@
 #'   the the assignment probabilities to latent classes/extreme types, where
 #'   \code{N} is the number of units/individuals, \code{K} the number of
 #'   latent classes, and \code{S} the number of posterior samples
+#' @param log_p if TRUE, treats elements in x as log-probabilities
+#' @param renormalize if TRUE, renormalizes the row of each slice of \code{x}
 #' @param maxit number of maximum iterations to use in the algorithm
+#' @param nthreads number of threads to use when relabeling (if OPENMP is enabled)
 #' @param verbose if true, prints the intermediate results
-#' @param log.p if TRUE, treats elements in x as log-probabilities
 #' @return Returns a list of four elements: \code{permuted}, the relabeled
 #'   array; \code{perms} the permutation pattern used for each sample;
 #'   \code{iterations} the number of iterations that were needed to permute
 #'   the array; and \code{status} with 0 = converged, 1 = not converged.
 #' @export
 relabelMCMC = function(
-    x, 
+    x,
+    log_p = TRUE,
+    renormalize = FALSE,
     maxit = 100, 
-    verbose = TRUE,
-    log.p = TRUE
+    nthreads = 0L,
+    verbose = TRUE
 ) {
     
     if (!is.array(x))
@@ -27,45 +31,36 @@ relabelMCMC = function(
     if (length(dim(x)) != 3L)
         stop("x has to be a three-dimensional array")
     
-    if (log.p) {
+    if (!log_p) 
+        x = log(x)
         
-        if (sum(is.infinite(x) | x > 0.0) > 0)
-            stop("log-probabilities have to be finite and less than zero")
-        
-        if (
-            !isTRUE(
-                all.equal(
-                    apply(x, 1, function(w) apply(w, 1, lse)), 
-                    matrix(0.0, nrow = dim(x)[1], ncol = dim(x)[2]),
-                    check.attributes = FALSE
-                )
+    if (sum(is.infinite(x) | x > 0.0) > 0)
+        stop("log-probabilities have to be finite and less than zero")
+    
+    if (!renormalize && 
+        !isTRUE(
+            all.equal(
+                apply(x, 1, function(w) apply(w, 1, lse)), 
+                matrix(0.0, nrow = dim(x)[1], ncol = dim(x)[2]),
+                check.attributes = FALSE
             )
         )
-            stop("probabilities in the rows of x don't sum to one")
+    )
+        stop("probabilities in the rows of x don't sum to one")
+    
+    # relabel
+    res = relabel_kl_log(
+        lphi        = aperm(x, c(2, 3, 1)), 
+        renormalize = FALSE,
+        maxit       = maxit, 
+        nthreads    = 0L,
+        verbose     = verbose
+    )
+    
+    # change to original scale of input
+    if (!log_p)
+        res$permuted = exp(res$permuted)
         
-        # relabel
-        res = relabel_kl_log(aperm(x, c(2, 3, 1)), maxit, verbose)
-        
-    } else {
-        
-        if (sum(x < 0 | x > 1) > 0)
-            stop("all elements in x have to lie between zero and one")
-        
-        if (
-            !isTRUE(
-                all.equal(
-                    apply(x, 1, rowSums), 
-                    matrix(1.0, nrow = dim(x)[1], ncol = dim(x)[2]),
-                    check.attributes = FALSE
-                )
-            )
-        )
-            stop("rows in x do not sum to one")
-        
-        # relabel
-        res = relabel_kl(aperm(x, c(2, 3, 1)), maxit, verbose)
-        
-    }
     # change indexing of permutations to start from one
     res$perms = res$perms + 1L 
     # change ordering of dimensions 
@@ -104,15 +99,17 @@ relabelMCMC = function(
 #'   the the assignment probabilities to latent classes/extreme types, where
 #'   \code{N} is the number of units/individuals, \code{K} the number of
 #'   latent classes, and \code{S} the number of posterior samples
-#' @param x.true matrix of dimension \code{N}\*\code{K} which contains the 
+#' @param x_true matrix of dimension \code{N}\*\code{K} which contains the 
 #'   true assignment/mixed-membership probabilities
+#' @param log_p if TRUE, treats elements in x as log-probabilities
+#' @param renormalize if TRUE, renormalizes the rows of \code{x} and \code{x_true}
+#' @param nthreads number of threads to use in parallel calculations
 #' @param verbose if true, prints KL-divergence to true probabilities before
 #'   and after relabeling
-#' @param log.p if TRUE, treats elements in x as log-probabilities
 #' @return Returns a list of two elements: \code{permuted}, the relabeled
 #'   array and, \code{perms}, the permutation pattern used for each sample
 #' @export
-relabelTRUE = function(x, x.true, verbose = TRUE, log.p = TRUE) {
+relabelTRUE = function(x, x_true, log_p = TRUE, renormalize = FALSE, nthreads = 0L, verbose = TRUE) {
     
     if (!is.array(x))
         stop("x has to be an array")
@@ -120,77 +117,57 @@ relabelTRUE = function(x, x.true, verbose = TRUE, log.p = TRUE) {
     if (length(dim(x)) != 3L)
         stop("x has to be a three-dimensional array")
     
-    if (!all(dim(x)[2:3] == dim(x.true)))
-        stop("dimension mismatch between x and x.true")
+    if (!all(dim(x)[2:3] == dim(x_true)))
+        stop("dimension mismatch between x and x_true")
     
-    if (log.p) {
+    if (!log_p) {
         
-        if (sum(is.infinite(x) | x > 0.0) > 0)
-            stop("log-probabilities in x have to be finite and less than zero")
-        if (sum(is.infinite(x.true) | x.true > 0.0) > 0)
-            stop("log-probabilities in x.true have to be finite and less than zero")
-
+        x = log(x)
+        x_true = log(x_true)
         
-        if (
-            !isTRUE(
-                all.equal(
-                    apply(x, 1L, function(w) apply(w, 1L, lse)), 
-                    matrix(0.0, nrow = dim(x)[1L], ncol = dim(x)[2L]),
-                    check.attributes = FALSE
-                )
-            )
-        )
-            stop("probabilities in the rows of x don't sum to one")
-        
-        if (
-            !isTRUE(
-                all.equal(
-                    apply(x.true, 1L, lse),
-                    rep(0.0, nrow(x.true)),
-                    check.attributes = F
-                )
-            )
-        )
-            stop("rows in x.true do not sum to one")
-        
-        # relabel
-        res = relabel_true_log(aperm(x, c(2, 3, 1)), x.true, verbose)
-        
-    } else {
-        
-        if (sum(x < 0 | x > 1) > 0)
-            stop("all elements in x have to lie between zero and one")
-        
-        if (sum(x.true < 0 | x.true > 1) > 0)
-            stop("all elements in x.true have to lie between zero and one")
-        
-        if (
-            !isTRUE(
-                all.equal(
-                    apply(x, 1, rowSums), 
-                    matrix(1.0, nrow = dim(x)[1], ncol = dim(x)[2]),
-                    check.attributes = FALSE
-                )
-            )
-        )
-            stop("rows in x do not sum to one")
-        
-        if (
-            !isTRUE(
-                all.equal(
-                    rowSums(x.true),
-                    rep(1.0, nrow(x.true)),
-                    check.attributes = F
-                )
-            )
-        )
-            stop("rows in x.true do not sum to one")
-        
-        # relabel
-        res = relabel_true(aperm(x, c(2, 3, 1)), x.true, verbose)
-    
     }
         
+    if (sum(is.infinite(x) | x > 0.0) > 0)
+        stop("log-probabilities in x have to be finite and less than zero")
+    if (sum(is.infinite(x_true) | x_true > 0.0) > 0)
+        stop("log-probabilities in x_true have to be finite and less than zero")
+
+    
+    if (
+        !isTRUE(
+            all.equal(
+                apply(x, 1L, function(w) apply(w, 1L, lse)), 
+                matrix(0.0, nrow = dim(x)[1L], ncol = dim(x)[2L]),
+                check.attributes = FALSE
+            )
+        )
+    )
+        stop("probabilities in the rows of x don't sum to one")
+    
+    if (
+        !isTRUE(
+            all.equal(
+                apply(x_true, 1L, lse),
+                rep(0.0, nrow(x_true)),
+                check.attributes = F
+            )
+        )
+    )
+        stop("rows in x_true do not sum to one")
+    
+    # relabel
+    res = relabel_true_log(
+        lphi        = aperm(x, c(2, 3, 1)), 
+        lphi_true   = x_true, 
+        renormalize = renormalize, 
+        nthreads    = nthreads,
+        verbose     = verbose
+    )
+    
+    # change to original scale of input
+    if (!log_p)
+        res$permuted = exp(res$permuted)
+    
     # change indexing of permutations to start from one
     res$perms = res$perms + 1L 
     # change ordering of dimensions 

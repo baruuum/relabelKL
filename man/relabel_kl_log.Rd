@@ -4,14 +4,24 @@
 \alias{relabel_kl_log}
 \title{Relabel membership vector by minimizing KL-algorithm (log-scale)}
 \usage{
-relabel_kl_log(lphi, maxit = 100L, verbose = TRUE)
+relabel_kl_log(
+  lphi,
+  renormalize = FALSE,
+  maxit = 100L,
+  nthreads = 0L,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{lphi}{cube of length \code{S}, each element of which is a 
 matrix of dimension N times K, where N is the number of individuals 
 and K is the number of extreme types (or classes).}
 
+\item{renormalize}{if \code{true}, renormalizes the rows of each slice of \code{lphi}}
+
 \item{maxit}{the number of maximum iterations to run, defaults to 100.}
+
+\item{nthreads}{number of threads to use in parallel processing}
 
 \item{verbose}{if TRUE, number of iterations and corresponding KL-distance 
 values are printed.}

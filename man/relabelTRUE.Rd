@@ -5,7 +5,14 @@
 \title{Relabel MCMC output by minimizing KL-divergence to true assignment 
 probabilities}
 \usage{
-relabelTRUE(x, x.true, verbose = TRUE, log.p = TRUE)
+relabelTRUE(
+  x,
+  x_true,
+  log_p = TRUE,
+  renormalize = FALSE,
+  nthreads = 0L,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{x}{an \code{S}\*\code{N}\*\code{K} array of MCMC samples containing
@@ -13,13 +20,17 @@ the the assignment probabilities to latent classes/extreme types, where
 \code{N} is the number of units/individuals, \code{K} the number of
 latent classes, and \code{S} the number of posterior samples}
 
-\item{x.true}{matrix of dimension \code{N}\*\code{K} which contains the 
+\item{x_true}{matrix of dimension \code{N}\*\code{K} which contains the 
 true assignment/mixed-membership probabilities}
+
+\item{log_p}{if TRUE, treats elements in x as log-probabilities}
+
+\item{renormalize}{if TRUE, renormalizes the rows of \code{x} and \code{x_true}}
+
+\item{nthreads}{number of threads to use in parallel calculations}
 
 \item{verbose}{if true, prints KL-divergence to true probabilities before
 and after relabeling}
-
-\item{log.p}{if TRUE, treats elements in x as log-probabilities}
 }
 \value{
 Returns a list of two elements: \code{permuted}, the relabeled
