@@ -261,10 +261,7 @@ Similarly, `traceplot` might be inspected by using
 
     array_traceplot(to_stan_array(rel_theta_arr), par = "theta")
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" /> The
-call will produce a `ggplot` object containing the traceplot of the
-single element `pi[1,2]` of the `pi` matrix; the second call will
-produce a traceplot of all elements in the `theta` parameter.
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
 
 Comparison to `label.switching::stephens`
 -----------------------------------------
@@ -288,7 +285,7 @@ function to get a sense of the efficiency gain. First, we use the
     res1 = label.switching::stephens(x)
     end_t = Sys.time()
     print(end_t - start_t)
-    #> Time difference of 2.360699 secs
+    #> Time difference of 2.523914 secs
 
 Next, we use the `relabelMCMC` function:
 
@@ -297,7 +294,7 @@ Next, we use the `relabelMCMC` function:
     res2 = relabelKL::relabelMCMC(x, maxit = 100L, verbose = FALSE, log_p = FALSE)
     end_t = Sys.time()
     print(end_t - start_t)
-    #> Time difference of 0.188421 secs
+    #> Time difference of 0.1952 secs
 
 and with multiple threads
 
@@ -306,7 +303,7 @@ and with multiple threads
     res3 = relabelKL::relabelMCMC(x, maxit = 100L, verbose = FALSE, nthreads = 2L, log_p = FALSE)
     end_t = Sys.time()
     print(end_t - start_t)
-    #> Time difference of 0.165904 secs
+    #> Time difference of 0.180078 secs
 
 Lastly, we check can check that the results are indentical:
 

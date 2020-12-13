@@ -137,7 +137,6 @@ Similarly, `traceplot` might be inspected by using
 ```{r}
 array_traceplot(to_stan_array(rel_theta_arr), par = "theta")
 ```
-The call will produce a `ggplot` object containing the traceplot of the single element `pi[1,2]` of the `pi` matrix; the second call will produce a traceplot of all elements in the `theta` parameter.
 
 ## Comparison to `label.switching::stephens`
 
