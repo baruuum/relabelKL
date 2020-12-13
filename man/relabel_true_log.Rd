@@ -4,7 +4,13 @@
 \alias{relabel_true_log}
 \title{Relabel membership vector by minimizing KL-algorithm to true labels}
 \usage{
-relabel_true_log(lphi, lphi_true, verbose = FALSE)
+relabel_true_log(
+  lphi,
+  lphi_true,
+  renormalize = FALSE,
+  nthreads = 0L,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{lphi}{cube of length \code{S}, each slice of which is a matrix of 
@@ -14,6 +20,10 @@ Elements of \code{lphi} should be log-probabilities.}
 
 \item{lphi_true}{a \code{N} times \code{K} matrix containing the "true"
 values of latent-class/mixed-membership probabilities on the log-scale}
+
+\item{renormalize}{whether to renormalize the rows of \code{lphi}}
+
+\item{nthreads}{number of threads to use if OPENMP is enabled}
 
 \item{verbose}{if true, KL-divergence from true labels is calculated
 and printed before and after relabeling}

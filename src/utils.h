@@ -32,38 +32,6 @@ inline double log_sum_exp(
 };
 
 
-//' KL Divergence between two distributions
-//'
-//' Calculates the KL-divergence of the target to the true distribution.
-//' Notice that the KL-divergence is defined only if the target distribution is
-//' absolutely continuous with respect to the true distribution. Hence, if
-//' \code{q(i)} = 0 but \code{p(i)} != 0, for some i, the function will return
-//' R_Inf. On the other hand, for \code{p(i)} = 0, \code{p(i)} * log(\code{p(i)}/\code{q(i)}
-//' is defined to be equal zero.
-//'
-//' @param p the "true" distribution
-//' @param q the "target" distribution
-//' @return Returns the KL-divergence of \code{q} from \code{p}
-template <typename T>
-inline double kl_dist(
-        const T & p,
-        const T & q)
-{
-    if (p.n_elem != q.n_elem)
-        Rcpp::stop("size mismatch (kl_dist)");
-
-    if (arma::any(arma::vectorise(p) <= 0.0) || arma::any(arma::vectorise(q) <= 0.0))
-        Rcpp::stop("negative probabilities in input vectors (kl_dist)");
-
-    double kl(0.0);
-    for (arma::uword i = 0; i < p.n_elem; ++i) {
-            kl += p(i) * (std::log(p(i)) - std::log(q(i)));
-    }
-
-    return kl;
-
-};
-
 
 //' KL Divergence between two distributions (log-scale)
 //'

@@ -4,7 +4,14 @@
 \alias{relabelMCMC}
 \title{Relabel MCMC output by KL-algorithm}
 \usage{
-relabelMCMC(x, maxit = 100, verbose = TRUE, log.p = TRUE)
+relabelMCMC(
+  x,
+  log_p = TRUE,
+  renormalize = FALSE,
+  maxit = 100,
+  nthreads = 0L,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{x}{an \code{S}\*\code{N}\*\code{K} array of MCMC samples containing
@@ -12,11 +19,15 @@ the the assignment probabilities to latent classes/extreme types, where
 \code{N} is the number of units/individuals, \code{K} the number of
 latent classes, and \code{S} the number of posterior samples}
 
+\item{log_p}{if TRUE, treats elements in x as log-probabilities}
+
+\item{renormalize}{if TRUE, renormalizes the row of each slice of \code{x}}
+
 \item{maxit}{number of maximum iterations to use in the algorithm}
 
-\item{verbose}{if true, prints the intermediate results}
+\item{nthreads}{number of threads to use when relabeling (if OPENMP is enabled)}
 
-\item{log.p}{if TRUE, treats elements in x as log-probabilities}
+\item{verbose}{if true, prints the intermediate results}
 }
 \value{
 Returns a list of four elements: \code{permuted}, the relabeled

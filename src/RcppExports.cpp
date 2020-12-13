@@ -6,32 +6,6 @@
 
 using namespace Rcpp;
 
-// relabel_kl
-Rcpp::List relabel_kl(const arma::cube& phi, arma::uword maxit, bool verbose);
-RcppExport SEXP _relabelKL_relabel_kl(SEXP phiSEXP, SEXP maxitSEXP, SEXP verboseSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::cube& >::type phi(phiSEXP);
-    Rcpp::traits::input_parameter< arma::uword >::type maxit(maxitSEXP);
-    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(relabel_kl(phi, maxit, verbose));
-    return rcpp_result_gen;
-END_RCPP
-}
-// relabel_true
-Rcpp::List relabel_true(const arma::cube& phi, const arma::mat& phi_true, bool verbose);
-RcppExport SEXP _relabelKL_relabel_true(SEXP phiSEXP, SEXP phi_trueSEXP, SEXP verboseSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::cube& >::type phi(phiSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type phi_true(phi_trueSEXP);
-    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(relabel_true(phi, phi_true, verbose));
-    return rcpp_result_gen;
-END_RCPP
-}
 // lse
 double lse(const NumericVector& x);
 RcppExport SEXP _relabelKL_lse(SEXP xSEXP) {
@@ -44,38 +18,40 @@ BEGIN_RCPP
 END_RCPP
 }
 // relabel_kl_log
-Rcpp::List relabel_kl_log(const arma::cube& lphi, arma::uword maxit, bool verbose);
-RcppExport SEXP _relabelKL_relabel_kl_log(SEXP lphiSEXP, SEXP maxitSEXP, SEXP verboseSEXP) {
+Rcpp::List relabel_kl_log(const arma::cube& lphi, bool renormalize, arma::uword maxit, arma::uword nthreads, bool verbose);
+RcppExport SEXP _relabelKL_relabel_kl_log(SEXP lphiSEXP, SEXP renormalizeSEXP, SEXP maxitSEXP, SEXP nthreadsSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::cube& >::type lphi(lphiSEXP);
+    Rcpp::traits::input_parameter< bool >::type renormalize(renormalizeSEXP);
     Rcpp::traits::input_parameter< arma::uword >::type maxit(maxitSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type nthreads(nthreadsSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(relabel_kl_log(lphi, maxit, verbose));
+    rcpp_result_gen = Rcpp::wrap(relabel_kl_log(lphi, renormalize, maxit, nthreads, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 // relabel_true_log
-Rcpp::List relabel_true_log(const arma::cube& lphi, const arma::mat& lphi_true, bool verbose);
-RcppExport SEXP _relabelKL_relabel_true_log(SEXP lphiSEXP, SEXP lphi_trueSEXP, SEXP verboseSEXP) {
+Rcpp::List relabel_true_log(const arma::cube& lphi, const arma::mat& lphi_true, bool renormalize, arma::uword nthreads, bool verbose);
+RcppExport SEXP _relabelKL_relabel_true_log(SEXP lphiSEXP, SEXP lphi_trueSEXP, SEXP renormalizeSEXP, SEXP nthreadsSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::cube& >::type lphi(lphiSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type lphi_true(lphi_trueSEXP);
+    Rcpp::traits::input_parameter< bool >::type renormalize(renormalizeSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type nthreads(nthreadsSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(relabel_true_log(lphi, lphi_true, verbose));
+    rcpp_result_gen = Rcpp::wrap(relabel_true_log(lphi, lphi_true, renormalize, nthreads, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_relabelKL_relabel_kl", (DL_FUNC) &_relabelKL_relabel_kl, 3},
-    {"_relabelKL_relabel_true", (DL_FUNC) &_relabelKL_relabel_true, 3},
     {"_relabelKL_lse", (DL_FUNC) &_relabelKL_lse, 1},
-    {"_relabelKL_relabel_kl_log", (DL_FUNC) &_relabelKL_relabel_kl_log, 3},
-    {"_relabelKL_relabel_true_log", (DL_FUNC) &_relabelKL_relabel_true_log, 3},
+    {"_relabelKL_relabel_kl_log", (DL_FUNC) &_relabelKL_relabel_kl_log, 5},
+    {"_relabelKL_relabel_true_log", (DL_FUNC) &_relabelKL_relabel_true_log, 5},
     {NULL, NULL, 0}
 };
 
