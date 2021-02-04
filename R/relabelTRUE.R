@@ -44,7 +44,7 @@ relabelTRUE = function(x, x_true, log_p = TRUE, renormalize = FALSE, nthreads = 
     
     
     if (
-        !isTRUE(
+        !renormalize && !isTRUE(
             all.equal(
                 apply(x, 1L, function(w) apply(w, 1L, lse)), 
                 matrix(0.0, nrow = dim(x)[1L], ncol = dim(x)[2L]),

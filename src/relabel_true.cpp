@@ -126,7 +126,7 @@ Rcpp::List relabel_true_log(
         
 #ifdef _OPENMP
         
-#pragma omp parallel for if (K > 3)
+        #pragma omp parallel for if (K > 3)
         for (n = 0; n < n_perms; ++n) {
             
             kl_q(n) = kl_dist_log(permute_mat(lP_hat, perms.row(n).t(), 0L), lphi_true);

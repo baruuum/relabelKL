@@ -46,11 +46,12 @@ inline double kl_dist_log(
         const T & lp,
         const T & lq)
 {
-    if (lp.n_elem != lq.n_elem)
-        Rcpp::stop("size mismatch (kl_dist_log)");
-
-    if (lp.has_inf() || lq.has_inf())
-        Rcpp::stop("non-finite elements in input (kl_dist_log)");
+    // if (lp.n_elem != lq.n_elem)
+    //     Rcpp::stop("size mismatch (kl_dist_log)");
+    // 
+    // if (lp.has_inf() || lq.has_inf())
+    //     Rcpp::stop("non-finite elements in input (kl_dist_log)");
+    // there are checked at the R level
     
     return arma::accu(arma::exp(lp) % (lp - lq));
     
