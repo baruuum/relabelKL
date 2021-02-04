@@ -6,17 +6,6 @@
 
 using namespace Rcpp;
 
-// lse
-double lse(const NumericVector& x);
-RcppExport SEXP _relabelKL_lse(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(lse(x));
-    return rcpp_result_gen;
-END_RCPP
-}
 // relabel_kl_log
 Rcpp::List relabel_kl_log(const arma::cube& lphi, bool renormalize, arma::uword maxit, arma::uword nthreads, bool verbose);
 RcppExport SEXP _relabelKL_relabel_kl_log(SEXP lphiSEXP, SEXP renormalizeSEXP, SEXP maxitSEXP, SEXP nthreadsSEXP, SEXP verboseSEXP) {
@@ -47,11 +36,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// lse
+double lse(const NumericVector& x);
+RcppExport SEXP _relabelKL_lse(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(lse(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_relabelKL_lse", (DL_FUNC) &_relabelKL_lse, 1},
     {"_relabelKL_relabel_kl_log", (DL_FUNC) &_relabelKL_relabel_kl_log, 5},
     {"_relabelKL_relabel_true_log", (DL_FUNC) &_relabelKL_relabel_true_log, 5},
+    {"_relabelKL_lse", (DL_FUNC) &_relabelKL_lse, 1},
     {NULL, NULL, 0}
 };
 
