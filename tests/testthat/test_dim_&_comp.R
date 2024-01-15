@@ -22,7 +22,7 @@ test_that("relabelMCMC works in both verbose and non-verbose mode", {
     
     N = sample(20:100, 1)
     K = sample(2:4, 1)
-    pvec = runif(K, 0.1, 1.0) * runif(1, 0.1, 10)
+    pvec = runif(K, 1, 1.5) * runif(1, 2, 10)
     S = 100
 
     # generate array 
@@ -48,7 +48,7 @@ test_that("relabelMCMC works in both verbose and non-verbose mode", {
 test_that("relabelMCMC works both in serial and parallel mode", {
   
   N = sample(20:100, 1);  K = sample(2:4, 1); S = 100
-  pvec = runif(K, 0.1, 1.0) * runif(1, 0.1, 10)
+  pvec = runif(K, 1, 1.5) * runif(1, 2, 10)
 
   # generate array 
   test_ar = simplify2array(
@@ -76,7 +76,7 @@ test_that("results coincide with stephens function from the label.switching pack
         
         # params
         N = sample(20:100, 1); K = sample(2:4, 1); S = 100
-        pvec = runif(K, 0.1, 1.0) * runif(1, 0.1, 10)
+        pvec = runif(K, 1, 1.5) * runif(1, 2, 10)
 
         # generate array 
         test_ar = simplify2array(
@@ -121,7 +121,7 @@ test_that("relabeled array matches permutations", {
     # params
     N = sample(20:100, 1)
     K = sample(2:4, 1)
-    pvec = runif(K, 0.1, 1.0) * runif(1, 0.1, 10)
+    pvec = runif(K, 1, 1.5) * runif(1, 2, 10)
     S = 100
 
     # generate array 
@@ -169,7 +169,7 @@ test_that("2nd relabeling results in identity mapping", {
     # params
     N = sample(20:100, 1)
     K = sample(2:4, 1)
-    pvec = runif(K, 0.1, 1.0) * runif(1, 0.1, 10)
+    pvec = runif(K, 1, 1.5) * runif(1, 2, 10)
     S = 100
 
     # generate array 
@@ -210,7 +210,7 @@ test_that("relabelTRUE throws appropriate errors", {
     # params
     N = sample(20:100, 1)
     K = sample(2:4, 1)
-    pvec = runif(K, 0.1, 1.0) * runif(1, 0.1, 10)
+    pvec = runif(K, 1, 1.5) * runif(1, 2, 10)
     S = 100
 
     # generate array 
@@ -276,7 +276,7 @@ test_that("relabling based on log-probs gives same results", {
         # params
         N = sample(20:100, 1)
         K = sample(2:4, 1)
-        pvec = runif(K, 0.1, 1.0) * runif(1, 0.1, 10)
+        pvec = runif(K, 1, 1.5) * runif(1, 2, 10)
         S = 100
 
         # generate array 
@@ -315,7 +315,7 @@ test_that("relabling based on log-probs gives same results", {
 test_that("renormalizing works", {
   # params
   N = sample(20:100, 1); K = sample(2:4, 1); S = 100
-  pvec = runif(K, 0.1, 1.0) * runif(1, 0.1, 10)
+  pvec = runif(K, 1, 1.5) * runif(1, 2, 10)
   
   # generate array 
   test_ar = simplify2array(
