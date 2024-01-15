@@ -4,8 +4,9 @@
 <!-- [![Travis build status](https://travis-ci.com/baruuum/relabelKL.svg?token=k7R3D8yhYkrGz6yc4eQf&branch=master)](https://Travis-ci.com/baruuum/relabelKL) -->
 <!-- [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/baruuum/relabelKL?branch=master&svg=true)](https://ci.appveyor.com/project/baruuum/relabelKL) -->
 <!-- [![Coverage status](https://codecov.io/gh/baruuum/relabelKL/branch/master/graph/badge.svg)](https://codecov.io/github/baruuum/relabelKL?branch=master) -->
+<!-- badges: start -->
 [![R-CMD-check](https://github.com/baruuum/relabelKL/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/baruuum/relabelKL/actions/workflows/R-CMD-check.yaml)
-[![License: GPL
+<!-- badges: end --> [![License: GPL
 v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 ## C++ implementation of the relabeling method proposed by Stephens(2000)
@@ -301,7 +302,7 @@ start_t = Sys.time()
 res1 = label.switching::stephens(x)
 end_t = Sys.time()
 print(end_t - start_t)
-#> Time difference of 3.624069 secs
+#> Time difference of 3.806669 secs
 ```
 
 Next, we use the `relabelMCMC` function:
@@ -312,7 +313,7 @@ start_t = Sys.time()
 res2 = relabelKL::relabelMCMC(x, maxit = 100L, verbose = FALSE, log_p = FALSE)
 end_t = Sys.time()
 print(end_t - start_t)
-#> Time difference of 0.2393169 secs
+#> Time difference of 0.2090929 secs
 ```
 
 and with multiple threads
@@ -323,7 +324,7 @@ start_t = Sys.time()
 res3 = relabelKL::relabelMCMC(x, maxit = 100L, verbose = FALSE, nthreads = 2L, log_p = FALSE)
 end_t = Sys.time()
 print(end_t - start_t)
-#> Time difference of 0.2095959 secs
+#> Time difference of 0.211798 secs
 ```
 
 Lastly, we check can check that the results are indentical:
