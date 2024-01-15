@@ -43,3 +43,5 @@ tmp*
 
 # don't track dll
 *.dll
+
+oldstuff/*

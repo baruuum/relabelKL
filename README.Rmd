@@ -13,9 +13,10 @@ knitr::opts_chunk$set(
 )
 ```
 
- [![Travis build status](https://travis-ci.com/baruuum/relabelKL.svg?token=k7R3D8yhYkrGz6yc4eQf&branch=master)](https://Travis-ci.com/baruuum/relabelKL)
- [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/baruuum/relabelKL?branch=master&svg=true)](https://ci.appveyor.com/project/baruuum/relabelKL)
- [![Coverage status](https://codecov.io/gh/baruuum/relabelKL/branch/master/graph/badge.svg)](https://codecov.io/github/baruuum/relabelKL?branch=master)
+ <!-- [![Travis build status](https://travis-ci.com/baruuum/relabelKL.svg?token=k7R3D8yhYkrGz6yc4eQf&branch=master)](https://Travis-ci.com/baruuum/relabelKL) -->
+ <!-- [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/baruuum/relabelKL?branch=master&svg=true)](https://ci.appveyor.com/project/baruuum/relabelKL) -->
+ <!-- [![Coverage status](https://codecov.io/gh/baruuum/relabelKL/branch/master/graph/badge.svg)](https://codecov.io/github/baruuum/relabelKL?branch=master) -->
+ [![R-CMD-check](https://github.com/baruuum/relabelKL/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/baruuum/relabelKL/actions/workflows/R-CMD-check.yaml)
  [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 ## C++ implementation of the relabeling method proposed by Stephens(2000)
