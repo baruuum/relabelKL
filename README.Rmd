@@ -18,8 +18,8 @@ knitr::opts_chunk$set(
  <!-- [![Coverage status](https://codecov.io/gh/baruuum/relabelKL/branch/master/graph/badge.svg)](https://codecov.io/github/baruuum/relabelKL?branch=master) -->
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/baruuum/relabelKL/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/baruuum/relabelKL/actions/workflows/R-CMD-check.yaml)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <!-- badges: end -->
- [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 ## C++ implementation of the relabeling method proposed by Stephens(2000)
 
