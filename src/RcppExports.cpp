@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // relabel_kl_log
 Rcpp::List relabel_kl_log(const arma::cube& lphi, bool renormalize, arma::uword maxit, arma::uword nthreads, bool verbose);
 RcppExport SEXP _relabelKL_relabel_kl_log(SEXP lphiSEXP, SEXP renormalizeSEXP, SEXP maxitSEXP, SEXP nthreadsSEXP, SEXP verboseSEXP) {

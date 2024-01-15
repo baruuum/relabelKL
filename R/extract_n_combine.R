@@ -22,7 +22,7 @@ extract_n_combine = function(fit, par) {
     if (!requireNamespace("abind", quietly = T))
         stop("please install the 'abind' package for this function to work")
 
-    if (class(fit) != "stanfit")
+    if (!inherits(fit, "stanfit"))
         stop("fit has to be a stanfit object")
     
     if (!is.character(par))

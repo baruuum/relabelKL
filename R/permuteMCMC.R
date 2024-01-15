@@ -50,7 +50,11 @@ permuteMCMC = function(x, perms, what = "cols") {
     
     if (n_dim == 3) {
         
-        if ((dim(x)[3] != K) | (dim(x)[1] != S))
+        if (
+            (p_dim == "cols" && dim(x)[3] != K) |
+            (p_dim == "rows" && dim(x)[2] != K) | 
+            (dim(x)[1] != S)
+        )
             stop("size mismatch (permuteMCMC)")
         
         if (p_dim == "both" && dim(x)[2] != dim(x)[3]) 
