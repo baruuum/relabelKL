@@ -61,12 +61,14 @@ array_traceplot = function(x, par) {
         ggplot2::ggplot(df, ggplot2::aes(x = iter, y = value, col = chain)) + 
             ggplot2::geom_line() + 
             ggplot2::theme_bw() +
-            # ggplot2::scale_color_viridis_d(
-            #     option = "D", 
-            #     begin = .1, 
-            #     end = .8, 
-            #     alpha = .6) + 
+            ggplot2::scale_color_viridis_d(
+                option = "D",
+                begin = .1,
+                end = .8,
+                alpha = .6
+            ) +
             ggplot2::labs(x = "Iteration", y = "") +
+            ggplot2::theme(panel.grid = ggplot2::element_blank()) +
             ggplot2::ggtitle(par)
         
     } else {
@@ -87,15 +89,16 @@ array_traceplot = function(x, par) {
             ggplot2::geom_line() + 
             ggplot2::facet_wrap(~ variable, scales = "free") + 
             ggplot2::theme_bw() +
-            # ggplot2::scale_color_viridis_d(
-            #     option = "D", 
-            #     begin = .1, 
-            #     end = .8, 
-            #     alpha = .6) +
+            ggplot2::scale_color_viridis_d(
+                option = "D",
+                begin = .1,
+                end = .8,
+                alpha = .6) +
             ggplot2::labs(x = "Iteration", y = "") + 
             ggplot2::theme(
                 strip.text = ggplot2::element_text(hjust = .1),
-                strip.background = ggplot2::element_blank()
+                strip.background = ggplot2::element_blank(),
+                panel.grid = ggplot2::element_blank()
             )
         
     }
