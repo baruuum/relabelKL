@@ -10,7 +10,8 @@
 #'     \item the name of an matrix/array/vector, e.g., \code{"theta"}
 #'     \item or a vector of single parameters, e.g., \code{c("theta[1,1]", "theta[1,2]")}
 #'   }
-#' @return the function returns a \code{ggplot} object of the traceplot
+#' @return the function returns a \code{ggplot2} object of the traceplot
+#' @details The \code{ggplot2} object is created based on a \code{data.frame} with the columns \code{iter, value, chain, variable}, which stand for, respectively, the iteration number, the value of the parameter, the chain id, and the parameter name. These column names can be used to overwrite the \code{ggplot2} characteristics. For example, to add a horizontal line at zero to a \code{ggplot2} object \code{p} created by the function, you can run \code{p + geom_hline(data = data.frame(value = 0), aes(yintercept = value))}.
 #' @export
 array_traceplot = function(x, par) {
     
