@@ -10,7 +10,8 @@
 #'     \item the name of an matrix/array/vector, e.g., \code{"theta"}
 #'     \item or a vector of single parameters, e.g., \code{c("theta[1,1]", "theta[1,2]")}
 #'   }
-#' @return the function returns a \code{ggplot} object of the traceplot
+#' @return the function returns a \code{ggplot2} object of the traceplot
+#' @details The \code{ggplot2} object is created based on a \code{data.frame} with the columns \code{iter, value, chain, variable}, which stand for, respectively, the iteration number, the value of the parameter, the chain id, and the parameter name. These column names can be used to overwrite the \code{ggplot2} characteristics. For example, to add a horizontal line at zero to a \code{ggplot2} object \code{p} created by the function, you can run \code{p + geom_hline(data = data.frame(value = 0), aes(yintercept = value))}.
 #' @export
 array_traceplot = function(x, par) {
     
@@ -62,11 +63,13 @@ array_traceplot = function(x, par) {
             ggplot2::geom_line() + 
             ggplot2::theme_bw() +
             ggplot2::scale_color_viridis_d(
-                option = "D", 
-                begin = .1, 
-                end = .8, 
-                alpha = .6) + 
+                option = "D",
+                begin = .1,
+                end = .8,
+                alpha = .6
+            ) +
             ggplot2::labs(x = "Iteration", y = "") +
+            ggplot2::theme(panel.grid = ggplot2::element_blank()) +
             ggplot2::ggtitle(par)
         
     } else {
@@ -85,17 +88,18 @@ array_traceplot = function(x, par) {
         
         ggplot2::ggplot(df, ggplot2::aes(x = iter, y = value, col = chain)) + 
             ggplot2::geom_line() + 
-            ggplot2::facet_wrap(~variable) + 
+            ggplot2::facet_wrap(~ variable, scales = "free") + 
             ggplot2::theme_bw() +
             ggplot2::scale_color_viridis_d(
-                option = "D", 
-                begin = .1, 
-                end = .8, 
+                option = "D",
+                begin = .1,
+                end = .8,
                 alpha = .6) +
             ggplot2::labs(x = "Iteration", y = "") + 
             ggplot2::theme(
                 strip.text = ggplot2::element_text(hjust = .1),
-                strip.background = ggplot2::element_blank()
+                strip.background = ggplot2::element_blank(),
+                panel.grid = ggplot2::element_blank()
             )
         
     }
