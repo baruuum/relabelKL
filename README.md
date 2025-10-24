@@ -95,7 +95,7 @@ returns a `list` of four elements:
 There are often other parameters in the model that depend on the
 labeling of the latent classes / extreme types. The `permuteMCMC`
 function can be used in this situation. For an three-dimensional array,
-`y`, where the last dimension correspond to `S` posterior draws, the
+`y`, where the first dimension correspond to `S` posterior draws, the
 `permuteMCMC` can be called based on the results from the `relabelMCMC`
 output (or for any other relabeling algorithm that returns the
 permutation mapping). Calling, for example,
